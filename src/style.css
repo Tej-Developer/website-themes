@@ -553,13 +553,14 @@ section[id] {
 
 body {
   background-color: var(--bg-base);
-  background-image: var(--bg-gradient);
+  background-image: var(--bg-gradient, radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent-primary) 14%, var(--bg-base)) 0%, var(--bg-base) 85%));
   color: var(--text-primary);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
   line-height: 1.6;
-  transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              background-image 0.4s ease,
               color 0.35s ease;
 }
 
@@ -766,7 +767,7 @@ body {
   z-index: 2;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 24px 24px 200px; /* Ample bottom room so dock never covers content */
+  padding: 88px 24px 200px; /* Ample top room for fixed floating navbar, bottom room for dock */
 }
 
 .section-container {
@@ -818,14 +819,25 @@ body {
    ------------------------------------------------------------ */
 
 .glass-navbar-wrapper {
-  position: sticky;
+  position: fixed;
   top: 14px;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   display: flex;
   justify-content: center;
+  padding: 0 24px;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  will-change: transform;
+}
+
+.glass-navbar-wrapper.nav-hidden {
+  transform: translateY(calc(-100% - 24px));
 }
 
 .glass-navbar {
+  pointer-events: auto;
   width: 100%;
   max-width: 1140px;
   padding: 10px 20px;
@@ -856,7 +868,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--liquid-blob-1));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, var(--liquid-blob-1)));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1105,8 +1117,15 @@ body {
   border-radius: 9999px;
   background: var(--glass-bg);
   backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
   border: 1px solid var(--accent-primary);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px var(--accent-glow);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: auto !important;
+  white-space: nowrap;
 }
 
 body.zen-mode .zen-exit-pill {
@@ -1127,6 +1146,11 @@ body.zen-mode #studio {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.zen-label-mobile {
+  display: none;
 }
 
 /* ------------------------------------------------------------
@@ -1200,8 +1224,8 @@ body.zen-mode #studio {
   background: linear-gradient(
     135deg, 
     var(--text-primary) 0%, 
-    var(--accent-primary) 50%, 
-    var(--liquid-blob-1) 100%
+    var(--accent-primary) 45%, 
+    var(--accent-secondary, var(--liquid-blob-1)) 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1294,7 +1318,7 @@ body.zen-mode #studio {
 .btn-full { width: 100%; }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), var(--liquid-blob-1));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, var(--liquid-blob-1)));
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.25);
   box-shadow: 0 8px 25px var(--accent-glow),
@@ -1940,7 +1964,7 @@ body.zen-mode #studio {
   top: -14px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--accent-primary), var(--liquid-blob-1));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, var(--liquid-blob-1)));
   color: #ffffff;
   box-shadow: 0 4px 14px var(--accent-glow);
   border-radius: 9999px;
@@ -2185,7 +2209,7 @@ body.zen-mode #studio {
 .eq-bar {
   width: 5px;
   border-radius: 9999px;
-  background: var(--accent-primary);
+  background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary, var(--accent-primary)));
   box-shadow: 0 0 10px var(--accent-glow);
   animation: eqPulse 1.2s infinite ease-in-out alternate;
   height: 30%;
@@ -2213,7 +2237,7 @@ body.zen-mode #studio {
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-primary), var(--liquid-blob-1));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, var(--liquid-blob-1)));
   border: none;
   color: #ffffff;
   display: flex;
@@ -2571,7 +2595,7 @@ body.zen-mode #studio {
 .theme-select-btn { width: 100%; }
 
 .theme-card.active .theme-select-btn {
-  background: linear-gradient(135deg, var(--accent-primary), var(--liquid-blob-1));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, var(--liquid-blob-1)));
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.3);
 }
@@ -2929,24 +2953,28 @@ body.zen-mode #studio {
   z-index: 10000;
   display: flex;
   flex-direction: column-reverse;
-  gap: 10px;
+  gap: 12px;
   pointer-events: none;
   max-width: 380px;
+  width: calc(100vw - 32px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-toast {
+  position: relative;
   pointer-events: auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 18px;
-  border-radius: 16px;
+  padding: 14px 18px;
+  border-radius: 18px;
   background: var(--glass-bg);
-  backdrop-filter: blur(32px) saturate(220%);
+  backdrop-filter: blur(36px) saturate(220%);
+  -webkit-backdrop-filter: blur(36px) saturate(220%);
   border: 1px solid var(--glass-border-hover);
   color: var(--text-primary);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow), inset 0 1px 1px var(--glass-specular);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow), inset 0 1px 1px var(--glass-specular);
   font-size: 0.88rem;
   font-weight: 500;
   cursor: grab;
@@ -2954,33 +2982,220 @@ body.zen-mode #studio {
   touch-action: pan-y;
   will-change: transform, opacity;
   animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease, margin-top 0.25s ease;
+}
+
+[data-mode="light"] .glass-toast {
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12), 0 0 20px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.8);
 }
 
 .glass-toast:active { cursor: grabbing; }
 
+/* Deck Base: The 3rd visible toast in the stack holds the stepped tab layers BELOW it */
+.glass-toast[data-toast-pos="deck-base"],
+.glass-toast.has-deck {
+  margin-bottom: 26px !important;
+  margin-top: 0 !important;
+  z-index: 10;
+}
+
+.glass-toast[data-toast-pos="deck-hidden"] {
+  display: none !important;
+}
+
+/* Stepped Card Deck Tabs peeking out BELOW the bottom edge (matching active theme colors) */
+.toast-deck-layers {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 24px;
+  pointer-events: none;
+  display: none;
+  z-index: -1;
+}
+
+.glass-toast.has-deck .toast-deck-layers {
+  display: block;
+}
+
+.toast-deck-layer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top: none;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: transform 0.25s ease, opacity 0.25s ease, border-color 0.3s ease;
+}
+
+/* Layer 1 - First stacked card peeking out just below the front card (matches primary accent) */
+.toast-deck-layer.deck-layer-1 {
+  width: 93%;
+  height: 8px;
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(180deg, var(--glass-bg) 0%, var(--accent-glow) 100%);
+  border: 1px solid var(--accent-primary);
+  border-top: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 10px var(--accent-glow);
+  z-index: 3;
+}
+
+/* Layer 2 - Middle stacked card peeking out further below (matches secondary harmonic blob) */
+.toast-deck-layer.deck-layer-2 {
+  width: 86%;
+  height: 16px;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(180deg, var(--glass-bg) 0%, color-mix(in srgb, var(--liquid-blob-2, var(--accent-primary)) 25%, var(--glass-bg)) 100%);
+  border: 1px solid var(--liquid-blob-2, var(--accent-primary));
+  border-top: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  opacity: 0.92;
+  z-index: 2;
+}
+
+/* Layer 3 - Deepest stacked card peeking out furthest below (matches primary ambient blob) */
+.toast-deck-layer.deck-layer-3 {
+  width: 79%;
+  height: 24px;
+  border-radius: 0 0 10px 10px;
+  background: linear-gradient(180deg, var(--glass-bg) 0%, color-mix(in srgb, var(--liquid-blob-1, var(--accent-primary)) 30%, var(--glass-bg)) 100%);
+  border: 1px solid var(--liquid-blob-1, var(--accent-primary));
+  border-top: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  opacity: 0.85;
+  z-index: 1;
+}
+
+/* Dark Mode Theme Harmony - Dynamically matches current theme */
+[data-mode="dark"] .toast-deck-layer.deck-layer-1 {
+  background: linear-gradient(180deg, var(--glass-bg) 0%, var(--accent-glow) 100%);
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 0 0 12px var(--accent-glow);
+}
+
+[data-mode="dark"] .toast-deck-layer.deck-layer-2 {
+  background: linear-gradient(180deg, var(--glass-bg) 0%, color-mix(in srgb, var(--liquid-blob-2, var(--accent-primary)) 25%, var(--bg-base, #030c18)) 100%);
+  border-color: var(--liquid-blob-2, var(--accent-primary));
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.38);
+}
+
+[data-mode="dark"] .toast-deck-layer.deck-layer-3 {
+  background: linear-gradient(180deg, var(--glass-bg) 0%, color-mix(in srgb, var(--liquid-blob-1, var(--accent-primary)) 30%, var(--bg-base, #030c18)) 100%);
+  border-color: var(--liquid-blob-1, var(--accent-primary));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.42);
+}
+
+/* Light Mode Theme Harmony - Clean frosted glass with theme accent tints */
+[data-mode="light"] .toast-deck-layer.deck-layer-1 {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, var(--accent-glow) 100%);
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08), 0 0 10px var(--accent-glow);
+}
+
+[data-mode="light"] .toast-deck-layer.deck-layer-2 {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, color-mix(in srgb, var(--liquid-blob-2, var(--accent-primary)) 16%, #ffffff) 100%);
+  border-color: var(--liquid-blob-2, var(--accent-primary));
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.1);
+}
+
+[data-mode="light"] .toast-deck-layer.deck-layer-3 {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, color-mix(in srgb, var(--liquid-blob-1, var(--accent-primary)) 22%, #ffffff) 100%);
+  border-color: var(--liquid-blob-1, var(--accent-primary));
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+}
+
+/* Toast Card Content Layout */
 .toast-content-wrap {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 12px;
   flex: 1;
+  min-width: 0;
+}
+
+.toast-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  margin-top: 1px;
+}
+
+.toast-check-svg {
+  width: 20px;
+  height: 20px;
+}
+
+.toast-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toast-title {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.toast-message-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.toast-stack-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 7px;
+  border-radius: 9999px;
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  box-shadow: 0 0 10px var(--accent-glow);
+  cursor: pointer;
+  flex-shrink: 0;
+  animation: stackPillPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .toast-close-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 1rem;
+  font-size: 1.05rem;
   cursor: pointer;
   padding: 2px 6px;
   border-radius: 6px;
   line-height: 1;
   transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
 .toast-close-btn:hover {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
 }
 
 @keyframes toastSlideIn {
@@ -3034,10 +3249,9 @@ body.zen-mode #studio {
 @media (max-width: 640px) {
   /* Layout & Containers */
   .app-layout { 
-    padding: 12px 12px 180px; 
+    padding: 72px 12px 180px; 
     width: 100%; 
     max-width: 100%; 
-    overflow-x: hidden;
   }
   .section-container { margin-top: 56px; }
   .section-header { margin-bottom: 28px; }
@@ -3045,11 +3259,44 @@ body.zen-mode #studio {
   .section-desc { font-size: 0.92rem; line-height: 1.5; }
 
   /* Top Navbar */
-  .glass-navbar-wrapper { top: 8px; }
+  .glass-navbar-wrapper { 
+    top: 8px; 
+    padding: 0 10px; 
+  }
+  .glass-navbar-wrapper.nav-hidden { 
+    transform: translateY(calc(-100% - 16px)); 
+  }
   .glass-navbar { padding: 8px 12px; gap: 8px; }
   .nav-brand { gap: 8px; }
   .nav-brand .brand-badge { display: none; }
   .active-theme-pill { display: none; }
+
+  /* Clean Preview Mode Pill Mobile */
+  .zen-exit-pill {
+    top: 10px;
+    padding: 6px 12px;
+    gap: 8px;
+    max-width: calc(100vw - 20px);
+    width: auto;
+    white-space: nowrap;
+  }
+  .zen-label-desktop {
+    display: none;
+  }
+  .zen-label-mobile {
+    display: inline;
+  }
+  .zen-status-text {
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+  #btn-exit-zen {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 32px;
+  }
 
   /* Hero Section */
   .hero-section { padding-top: 24px; }
@@ -3209,12 +3456,12 @@ body.zen-mode #studio {
   .modal-header { gap: 8px; }
   .modal-title { font-size: 1.15rem; }
 
-  /* Toast Notifications */
-  .toast-container { right: 12px; bottom: 12px; left: 12px; max-width: none; }
+  /* Toast Notifications - Elevated above mobile floating theme dock */
+  .toast-container { right: 12px; bottom: 76px; left: 12px; max-width: none; }
 }
 
 @media (max-width: 380px) {
-  .app-layout { padding: 10px 10px 180px; }
+  .app-layout { padding: 66px 10px 180px; }
   .hero-title { font-size: 1.8rem; }
   .metric-val { font-size: 1.4rem; }
   .metric-big-number { font-size: 2.3rem; }

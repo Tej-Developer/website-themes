@@ -13,6 +13,7 @@ const DEFAULT_THEMES = {
     blob3: "#06b6d4",
     blob4: "#3b82f6",
     accent: "#06b6d4",
+    accent2: "#8b5cf6",
     accentGlow: "rgba(6, 182, 212, 0.45)",
     glassBg: "rgba(255, 255, 255, 0.05)",
     glassBorder: "rgba(255, 255, 255, 0.12)",
@@ -29,6 +30,7 @@ const DEFAULT_THEMES = {
     blob3: "#14b8a6",
     blob4: "#84cc16",
     accent: "#34d399",
+    accent2: "#10b981",
     accentGlow: "rgba(52, 211, 153, 0.5)",
     glassBg: "rgba(16, 185, 129, 0.05)",
     glassBorder: "rgba(52, 211, 153, 0.16)",
@@ -45,6 +47,7 @@ const DEFAULT_THEMES = {
     blob3: "#fbbf24",
     blob4: "#d946ef",
     accent: "#fb923c",
+    accent2: "#f43f5e",
     accentGlow: "rgba(251, 146, 60, 0.5)",
     glassBg: "rgba(251, 146, 60, 0.05)",
     glassBorder: "rgba(251, 146, 60, 0.18)",
@@ -61,6 +64,7 @@ const DEFAULT_THEMES = {
     blob3: "#06b6d4",
     blob4: "#f43f5e",
     accent: "#f43f5e",
+    accent2: "#22d3ee",
     accentGlow: "rgba(244, 63, 94, 0.55)",
     glassBg: "rgba(236, 72, 153, 0.06)",
     glassBorder: "rgba(236, 72, 153, 0.22)",
@@ -77,6 +81,7 @@ const DEFAULT_THEMES = {
     blob3: "#06b6d4",
     blob4: "#ec4899",
     accent: "#2563eb",
+    accent2: "#7c3aed",
     accentGlow: "rgba(37, 99, 235, 0.35)",
     glassBg: "rgba(255, 255, 255, 0.65)",
     glassBorder: "rgba(255, 255, 255, 0.85)",
@@ -93,6 +98,7 @@ const DEFAULT_THEMES = {
     blob3: "#86efac",
     blob4: "#166534",
     accent: "#4ade80",
+    accent2: "#22c55e",
     accentGlow: "rgba(74, 222, 128, 0.45)",
     glassBg: "rgba(34, 197, 94, 0.05)",
     glassBorder: "rgba(74, 222, 128, 0.18)",
@@ -109,6 +115,7 @@ const DEFAULT_THEMES = {
     blob3: "#fb7185",
     blob4: "#9f1239",
     accent: "#f43f5e",
+    accent2: "#fb7185",
     accentGlow: "rgba(244, 63, 94, 0.5)",
     glassBg: "rgba(244, 63, 94, 0.06)",
     glassBorder: "rgba(244, 63, 94, 0.22)",
@@ -125,6 +132,7 @@ const DEFAULT_THEMES = {
     blob3: "#38bdf8",
     blob4: "#06b6d4",
     accent: "#38bdf8",
+    accent2: "#0ea5e9",
     accentGlow: "rgba(56, 189, 248, 0.45)",
     glassBg: "rgba(56, 189, 248, 0.05)",
     glassBorder: "rgba(56, 189, 248, 0.2)",
@@ -141,6 +149,7 @@ const DEFAULT_THEMES = {
     blob3: "#3b82f6",
     blob4: "#f43f5e",
     accent: "#a855f7",
+    accent2: "#d946ef",
     accentGlow: "rgba(168, 85, 247, 0.5)",
     glassBg: "rgba(217, 70, 239, 0.06)",
     glassBorder: "rgba(217, 70, 239, 0.24)",
@@ -157,6 +166,7 @@ const DEFAULT_THEMES = {
     blob3: "#fbbf24",
     blob4: "#b45309",
     accent: "#fbbf24",
+    accent2: "#f59e0b",
     accentGlow: "rgba(251, 191, 36, 0.45)",
     glassBg: "rgba(245, 158, 11, 0.05)",
     glassBorder: "rgba(251, 191, 36, 0.2)",
@@ -173,6 +183,7 @@ const DEFAULT_THEMES = {
     blob3: "#c084fc",
     blob4: "#4f46e5",
     accent: "#c084fc",
+    accent2: "#9333ea",
     accentGlow: "rgba(192, 132, 252, 0.5)",
     glassBg: "rgba(147, 51, 234, 0.06)",
     glassBorder: "rgba(192, 132, 252, 0.22)",
@@ -189,6 +200,7 @@ const DEFAULT_THEMES = {
     blob3: "#cbd5e1",
     blob4: "#475569",
     accent: "#e2e8f0",
+    accent2: "#94a3b8",
     accentGlow: "rgba(226, 232, 240, 0.35)",
     glassBg: "rgba(255, 255, 255, 0.04)",
     glassBorder: "rgba(255, 255, 255, 0.16)",
@@ -343,6 +355,11 @@ function editCustomTheme(themeId) {
   if (accentInput) accentInput.value = t.accent;
   if (accentHex) accentHex.value = t.accent;
 
+  const accent2Input = document.getElementById("studio-accent2-color");
+  const accent2Hex = document.getElementById("studio-accent2-hex");
+  if (accent2Input) accent2Input.value = t.accent2 || "#8b5cf6";
+  if (accent2Hex) accent2Hex.value = t.accent2 || "#8b5cf6";
+
   const b1 = document.getElementById("studio-blob1-color");
   const b1Hex = document.getElementById("studio-blob1-hex");
   if (b1) b1.value = t.blob1;
@@ -434,6 +451,7 @@ function injectCustomThemeCard(t) {
   let existing = container.querySelector(`[data-theme-target="${t.id}"]`);
   if (existing) existing.remove();
 
+  const safeName = escapeHtml(t.name || "Custom Theme");
   const card = document.createElement("div");
   card.className = "liquid-card theme-card tilt-card";
   card.dataset.themeTarget = t.id;
@@ -446,7 +464,7 @@ function injectCustomThemeCard(t) {
     </div>
     <div class="theme-card-body">
       <div class="theme-title-row">
-        <h3 class="theme-name">${t.name}</h3>
+        <h3 class="theme-name">${safeName}</h3>
         <span class="theme-status-tag">CUSTOM</span>
       </div>
       <p class="theme-desc">User-crafted liquid glass spectrum with dynamic fluid gradients.</p>
@@ -489,13 +507,15 @@ function injectCustomDockButton(t) {
   let existing = container.querySelector(`[data-theme-target="${t.id}"]`);
   if (existing) existing.remove();
 
+  const rawName = (t.name || "Custom").trim();
+  const firstName = escapeHtml(rawName.split(" ")[0] || "Custom");
   const btn = document.createElement("button");
   btn.className = "dock-btn";
   btn.dataset.themeTarget = t.id;
-  btn.title = t.name;
+  btn.title = t.name || "Custom Theme";
   btn.innerHTML = `
     <span class="dock-dot" style="background: ${t.accent}; box-shadow: 0 0 6px ${t.accent};"></span>
-    <span class="dock-name">${t.name.split(" ")[0]}</span>
+    <span class="dock-name">${firstName}</span>
   `;
 
   btn.addEventListener("click", (e) => {
@@ -576,12 +596,38 @@ class FluidBlob {
   }
 }
 
+function escapeHtml(str) {
+  if (typeof str !== "string") return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function hslToHex(h, s, l) {
+  l /= 100;
+  const a = (s * Math.min(l, 1 - l)) / 100;
+  const f = (n) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color)
+      .toString(16)
+      .padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
 function hexToRgba(hex, alpha) {
-  if (!hex) return `rgba(99, 102, 241, ${alpha})`;
+  if (!hex || typeof hex !== "string") return `rgba(99, 102, 241, ${alpha})`;
   if (hex.startsWith("rgba")) return hex;
-  let c = hex.replace("#", "");
+  let c = hex.replace("#", "").trim();
   if (c.length === 3) {
     c = c.split("").map((x) => x + x).join("");
+  }
+  if (!/^[0-9a-fA-F]{6}$/.test(c)) {
+    return `rgba(99, 102, 241, ${alpha})`;
   }
   const num = parseInt(c, 16);
   const r = (num >> 16) & 255;
@@ -592,9 +638,9 @@ function hexToRgba(hex, alpha) {
 
 // Canvas Initialization
 const canvas = document.getElementById("liquid-canvas");
-const ctx = canvas.getContext("2d");
-let width = (canvas.width = window.innerWidth);
-let height = (canvas.height = window.innerHeight);
+const ctx = canvas ? canvas.getContext("2d") : null;
+let width = canvas ? (canvas.width = window.innerWidth) : window.innerWidth;
+let height = canvas ? (canvas.height = window.innerHeight) : window.innerHeight;
 
 const mouse = { x: null, y: null };
 window.addEventListener("mousemove", (e) => {
@@ -607,8 +653,10 @@ window.addEventListener("mouseleave", () => {
 });
 
 window.addEventListener("resize", () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
+  if (canvas) {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
 });
 
 const blobs = [
@@ -625,6 +673,7 @@ let lastFpsUpdate = performance.now();
 const fpsCounterEl = document.getElementById("fps-counter");
 
 function renderFluidLoop(time) {
+  if (!ctx || !canvas) return;
   frameCount++;
   if (time - lastFpsUpdate >= 500) {
     const currentFps = Math.round((frameCount * 1000) / (time - lastFpsUpdate));
@@ -772,10 +821,25 @@ function initScrollSpy() {
    7. DARK / LIGHT MODE ENGINE
    ------------------------------------------------------------ */
 
-function setMode(mode) {
+function setMode(mode, silent = false) {
   currentMode = mode;
   localStorage.setItem("aether-mode", mode);
   document.documentElement.setAttribute("data-mode", mode);
+
+  // If a custom theme is active, handle --bg-base so text doesn't become black-on-black in light mode
+  const activeConfig = THEMES[currentTheme];
+  if (activeConfig && activeConfig.id && !DEFAULT_THEMES[activeConfig.id]) {
+    if (mode === "light") {
+      document.documentElement.style.removeProperty("--bg-base");
+      document.documentElement.style.removeProperty("--bg-gradient");
+    } else {
+      document.documentElement.style.setProperty("--bg-base", activeConfig.bg);
+      document.documentElement.style.setProperty(
+        "--bg-gradient",
+        `radial-gradient(circle at 50% 0%, color-mix(in srgb, ${activeConfig.accent} 14%, ${activeConfig.bg}) 0%, ${activeConfig.bg} 85%)`
+      );
+    }
+  }
 
   const modeText = document.getElementById("mode-text-label");
   if (modeText) modeText.textContent = mode === "dark" ? "Dark" : "Light";
@@ -788,7 +852,9 @@ function setMode(mode) {
     statMode.innerHTML = `${mode === "dark" ? "Dark" : "Light"} <span class="stat-unit">Mode</span>`;
   }
 
-  showToast(`Switched to ${mode === "dark" ? "Dark Glass 🌙" : "Light Glass ☀️"}`);
+  if (!silent) {
+    showToast(`Switched to ${mode === "dark" ? "Dark Glass 🌙" : "Light Glass ☀️"}`);
+  }
 }
 
 function toggleMode() {
@@ -805,7 +871,7 @@ function initModeToggle() {
   const mobileModeBtn = document.getElementById("btn-mobile-mode-toggle");
   if (mobileModeBtn) mobileModeBtn.addEventListener("click", toggleMode);
 
-  setMode(currentMode);
+  setMode(currentMode, true);
 }
 
 /* ------------------------------------------------------------
@@ -819,11 +885,19 @@ function initMobileNav() {
   const mobileLinks = document.querySelectorAll(".mobile-nav-link");
 
   function openDrawer() {
-    if (backdrop) backdrop.classList.add("active");
+    if (backdrop) {
+      backdrop.classList.add("active");
+      backdrop.setAttribute("aria-hidden", "false");
+    }
+    document.body.style.overflow = "hidden";
   }
 
   function closeDrawer() {
-    if (backdrop) backdrop.classList.remove("active");
+    if (backdrop) {
+      backdrop.classList.remove("active");
+      backdrop.setAttribute("aria-hidden", "true");
+    }
+    document.body.style.overflow = "";
   }
 
   if (menuBtn) menuBtn.addEventListener("click", openDrawer);
@@ -851,25 +925,115 @@ function initMobileNav() {
 }
 
 /* ------------------------------------------------------------
+   8B. SMART HEADER SCROLL HIDE/SHOW (SMOOTH REVEAL ON SCROLL UP)
+   ------------------------------------------------------------ */
+
+function initHeaderScroll() {
+  const navbar = document.querySelector(".glass-navbar-wrapper");
+  if (!navbar) return;
+
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+  const threshold = 6; // sensitive threshold so scrolling up even slightly reveals the navbar
+
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+
+        // If mobile nav drawer is open, keep navbar visible
+        const mobileDrawerBackdrop = document.getElementById("mobile-nav-backdrop");
+        if (mobileDrawerBackdrop && mobileDrawerBackdrop.classList.contains("active")) {
+          navbar.classList.remove("nav-hidden");
+          lastScrollY = currentScrollY;
+          ticking = false;
+          return;
+        }
+
+        // At or near the top of the page (within 20px), always show navbar
+        if (currentScrollY <= 20) {
+          navbar.classList.remove("nav-hidden");
+        } else {
+          const delta = currentScrollY - lastScrollY;
+          // Scrolling down past 70px -> hide navbar
+          if (delta > threshold && currentScrollY > 70) {
+            navbar.classList.add("nav-hidden");
+          } 
+          // Scrolling up even slightly -> reveal navbar immediately
+          else if (delta < -threshold) {
+            navbar.classList.remove("nav-hidden");
+          }
+        }
+
+        lastScrollY = currentScrollY;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+/* ------------------------------------------------------------
    9. CLEAN PREVIEW MODE WITH EXIT BUTTON (POINT 4)
    ------------------------------------------------------------ */
 
 function initZenPreviewMode() {
   const zenBtn = document.getElementById("dock-btn-zen");
+  const exitPill = document.getElementById("zen-exit-pill");
   const exitPillBtn = document.getElementById("btn-exit-zen");
 
   function toggleZen(forceState) {
     const active = typeof forceState === "boolean" ? forceState : !document.body.classList.contains("zen-mode");
     document.body.classList.toggle("zen-mode", active);
-    showToast(active ? "Clean Preview Active (Click Exit button or Esc to return)" : "Standard View Restored ✨");
+    if (exitPill) {
+      exitPill.setAttribute("aria-hidden", active ? "false" : "true");
+    }
+    showToast(active ? "Clean Preview Active (Tap Exit or Esc to return)" : "Standard View Restored ✨");
   }
 
-  if (zenBtn) zenBtn.addEventListener("click", () => toggleZen());
-  if (exitPillBtn) exitPillBtn.addEventListener("click", () => toggleZen(false));
+  function handleExit(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    toggleZen(false);
+  }
+
+  if (zenBtn) {
+    zenBtn.addEventListener("click", () => toggleZen());
+    zenBtn.addEventListener("touchend", (e) => {
+      e.stopPropagation();
+      toggleZen();
+    }, { passive: true });
+  }
+
+  if (exitPillBtn) {
+    exitPillBtn.addEventListener("click", handleExit);
+    exitPillBtn.addEventListener("touchend", handleExit);
+  }
+
+  if (exitPill) {
+    exitPill.addEventListener("click", (e) => {
+      // If clicked anywhere on the pill except inside another button
+      handleExit(e);
+    });
+    exitPill.addEventListener("touchend", handleExit);
+  }
 
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && document.body.classList.contains("zen-mode")) {
-      toggleZen(false);
+    if (e.key === "Escape") {
+      const modal = document.getElementById("modal-glass-demo");
+      const backdrop = document.getElementById("mobile-nav-backdrop");
+      if (modal && modal.classList.contains("active")) {
+        modal.classList.remove("active");
+        modal.setAttribute("aria-hidden", "true");
+      } else if (backdrop && backdrop.classList.contains("active")) {
+        backdrop.classList.remove("active");
+        backdrop.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      } else if (document.body.classList.contains("zen-mode")) {
+        toggleZen(false);
+      }
     }
   });
 }
@@ -878,7 +1042,7 @@ function initZenPreviewMode() {
    10. MULTI-THEME ENGINE & SWITCHER LOGIC
    ------------------------------------------------------------ */
 
-function applyTheme(themeKey) {
+function applyTheme(themeKey, silent = false) {
   if (!THEMES[themeKey]) return;
   currentTheme = themeKey;
   localStorage.setItem("aether-theme", themeKey);
@@ -886,16 +1050,43 @@ function applyTheme(themeKey) {
   document.documentElement.dataset.theme = themeKey;
   const config = THEMES[themeKey];
 
+  const customProperties = [
+    "--bg-base",
+    "--bg-gradient",
+    "--accent-primary",
+    "--accent-glow",
+    "--accent-secondary",
+    "--progress-gradient",
+    "--liquid-blob-1",
+    "--liquid-blob-2",
+    "--liquid-blob-3",
+    "--liquid-blob-4"
+  ];
+
   if (config.id && !DEFAULT_THEMES[config.id]) {
-    document.documentElement.style.setProperty("--bg-base", config.bg);
+    if (currentMode === "dark") {
+      document.documentElement.style.setProperty("--bg-base", config.bg);
+      document.documentElement.style.setProperty(
+        "--bg-gradient",
+        `radial-gradient(circle at 50% 0%, color-mix(in srgb, ${config.accent} 14%, ${config.bg}) 0%, ${config.bg} 85%)`
+      );
+    } else {
+      document.documentElement.style.removeProperty("--bg-base");
+      document.documentElement.style.removeProperty("--bg-gradient");
+    }
     document.documentElement.style.setProperty("--accent-primary", config.accent);
     document.documentElement.style.setProperty("--accent-glow", hexToRgba(config.accent, 0.45));
+    if (config.accent2) {
+      document.documentElement.style.setProperty("--accent-secondary", config.accent2);
+      document.documentElement.style.setProperty("--progress-gradient", `linear-gradient(90deg, ${config.accent2}, ${config.accent})`);
+    }
     document.documentElement.style.setProperty("--liquid-blob-1", config.blob1);
     document.documentElement.style.setProperty("--liquid-blob-2", config.blob2);
+    if (config.blob3) document.documentElement.style.setProperty("--liquid-blob-3", config.blob3);
+    if (config.blob4) document.documentElement.style.setProperty("--liquid-blob-4", config.blob4);
   } else {
-    document.documentElement.style.removeProperty("--bg-base");
-    document.documentElement.style.removeProperty("--liquid-blob-1");
-    document.documentElement.style.removeProperty("--liquid-blob-2");
+    // Thoroughly remove all custom properties when applying default preset
+    customProperties.forEach((prop) => document.documentElement.style.removeProperty(prop));
   }
 
   // Update navbar theme indicator
@@ -926,7 +1117,9 @@ function applyTheme(themeKey) {
   // Sync Studio Inputs
   syncStudioWithActiveTheme(config);
 
-  showToast(`Switched to ${config.name} theme ✨`);
+  if (!silent) {
+    showToast(`Switched to ${config.name} theme ✨`);
+  }
 }
 
 function updateTokenDisplay(themeKey, config) {
@@ -944,6 +1137,7 @@ function updateTokenDisplay(themeKey, config) {
   --liquid-blob-3: <span style="color:${config.blob3 || config.blob1}">${config.blob3 || config.blob1}</span>;
   --liquid-blob-4: <span style="color:${config.blob4 || config.blob2}">${config.blob4 || config.blob2}</span>;
   --accent-primary: <span style="color:${config.accent}">${config.accent}</span>;
+  --accent-secondary: <span style="color:${config.accent2 || config.accent}">${config.accent2 || config.accent}</span>;
   --accent-glow: <span style="color:${config.accent}">${config.accentGlow || hexToRgba(config.accent, 0.45)}</span>;
   --glass-bg: <span style="color:${config.accent}">${config.glassBg || "rgba(255, 255, 255, 0.06)"}</span>;
   --glass-border: <span style="color:${config.accent}">${config.glassBorder || "rgba(255, 255, 255, 0.14)"}</span>;
@@ -987,6 +1181,8 @@ function syncStudioWithActiveTheme(config) {
   const bgHex = document.getElementById("studio-bg-hex");
   const accentColor = document.getElementById("studio-accent-color");
   const accentHex = document.getElementById("studio-accent-hex");
+  const accent2Color = document.getElementById("studio-accent2-color");
+  const accent2Hex = document.getElementById("studio-accent2-hex");
   const themeNameInput = document.getElementById("studio-theme-name");
 
   if (blob1Color) blob1Color.value = blob1Hex.value = config.blob1 || "#6366f1";
@@ -996,21 +1192,33 @@ function syncStudioWithActiveTheme(config) {
 
   if (bgColor) bgColor.value = bgHex.value = config.bg || "#070913";
   if (accentColor) accentColor.value = accentHex.value = config.accent || "#06b6d4";
+  if (accent2Color) accent2Color.value = accent2Hex.value = config.accent2 || "#8b5cf6";
   if (themeNameInput) themeNameInput.value = config.name;
 
-  updateStudioSwatches(config.bg, config.blob1, config.blob2, config.accent);
+  updateStudioSwatches(config.bg, config.blob1, config.blob2, config.accent, config.accent2 || "#8b5cf6");
 }
 
-function updateStudioSwatches(bg, b1, b2, acc) {
+function updateStudioSwatches(bg, b1, b2, acc, acc2) {
   const sBg = document.getElementById("swatch-disp-bg");
   const sB1 = document.getElementById("swatch-disp-b1");
   const sB2 = document.getElementById("swatch-disp-b2");
   const sAcc = document.getElementById("swatch-disp-acc");
+  const sAcc2 = document.getElementById("swatch-disp-acc2");
 
   if (sBg) sBg.style.background = bg;
   if (sB1) sB1.style.background = b1;
   if (sB2) sB2.style.background = b2;
   if (sAcc) sAcc.style.background = acc;
+  if (sAcc2) sAcc2.style.background = acc2 || "#8b5cf6";
+}
+
+function updateStudioSwatchesFromInputs() {
+  const bg = document.getElementById("studio-bg-hex")?.value || "#070913";
+  const b1 = document.getElementById("studio-blob1-hex")?.value || "#6366f1";
+  const b2 = document.getElementById("studio-blob2-hex")?.value || "#8b5cf6";
+  const acc = document.getElementById("studio-accent-hex")?.value || "#06b6d4";
+  const acc2 = document.getElementById("studio-accent2-hex")?.value || "#8b5cf6";
+  updateStudioSwatches(bg, b1, b2, acc, acc2);
 }
 
 function initThemeStudio() {
@@ -1040,13 +1248,19 @@ function initThemeStudio() {
       colorEl.addEventListener("input", (e) => {
         hexEl.value = e.target.value;
         document.documentElement.style.setProperty(`--liquid-blob-${idx}`, e.target.value);
-        if (THEMES[currentTheme]) THEMES[currentTheme][`blob${idx}`] = e.target.value;
+        if (THEMES[currentTheme] && currentTheme.startsWith("custom_")) {
+          THEMES[currentTheme][`blob${idx}`] = e.target.value;
+        }
+        updateStudioSwatchesFromInputs();
       });
       hexEl.addEventListener("input", (e) => {
         if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
           colorEl.value = e.target.value;
           document.documentElement.style.setProperty(`--liquid-blob-${idx}`, e.target.value);
-          if (THEMES[currentTheme]) THEMES[currentTheme][`blob${idx}`] = e.target.value;
+          if (THEMES[currentTheme] && currentTheme.startsWith("custom_")) {
+            THEMES[currentTheme][`blob${idx}`] = e.target.value;
+          }
+          updateStudioSwatchesFromInputs();
         }
       });
     }
@@ -1185,16 +1399,25 @@ function initThemeStudio() {
   const bgHex = document.getElementById("studio-bg-hex");
   const accentColor = document.getElementById("studio-accent-color");
   const accentHex = document.getElementById("studio-accent-hex");
+  const accent2Color = document.getElementById("studio-accent2-color");
+  const accent2Hex = document.getElementById("studio-accent2-hex");
+
+  function updateBgBase(color) {
+    document.documentElement.style.setProperty("--bg-base", color);
+    const grad = `radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent-primary) 14%, ${color}) 0%, ${color} 85%)`;
+    document.documentElement.style.setProperty("--bg-gradient", grad);
+    updateStudioSwatchesFromInputs();
+  }
 
   if (bgColor && bgHex) {
     bgColor.addEventListener("input", (e) => {
       bgHex.value = e.target.value;
-      document.documentElement.style.setProperty("--bg-base", e.target.value);
+      updateBgBase(e.target.value);
     });
     bgHex.addEventListener("input", (e) => {
       if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
         bgColor.value = e.target.value;
-        document.documentElement.style.setProperty("--bg-base", e.target.value);
+        updateBgBase(e.target.value);
       }
     });
   }
@@ -1204,13 +1427,73 @@ function initThemeStudio() {
       accentHex.value = e.target.value;
       document.documentElement.style.setProperty("--accent-primary", e.target.value);
       document.documentElement.style.setProperty("--accent-glow", hexToRgba(e.target.value, 0.45));
+      // Keep bg-gradient ambient center synchronized with new primary accent
+      const curBg = bgHex ? bgHex.value : "#070913";
+      document.documentElement.style.setProperty(
+        "--bg-gradient",
+        `radial-gradient(circle at 50% 0%, color-mix(in srgb, ${e.target.value} 14%, ${curBg}) 0%, ${curBg} 85%)`
+      );
+      updateStudioSwatchesFromInputs();
     });
     accentHex.addEventListener("input", (e) => {
       if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
         accentColor.value = e.target.value;
         document.documentElement.style.setProperty("--accent-primary", e.target.value);
         document.documentElement.style.setProperty("--accent-glow", hexToRgba(e.target.value, 0.45));
+        const curBg = bgHex ? bgHex.value : "#070913";
+        document.documentElement.style.setProperty(
+          "--bg-gradient",
+          `radial-gradient(circle at 50% 0%, color-mix(in srgb, ${e.target.value} 14%, ${curBg}) 0%, ${curBg} 85%)`
+        );
+        updateStudioSwatchesFromInputs();
       }
+    });
+  }
+
+  // Secondary Accent Controls
+  function updateAccentSecondary(color) {
+    document.documentElement.style.setProperty("--accent-secondary", color);
+    document.documentElement.style.setProperty("--progress-gradient", `linear-gradient(90deg, ${color}, var(--accent-primary))`);
+    updateStudioSwatchesFromInputs();
+  }
+
+  if (accent2Color && accent2Hex) {
+    accent2Color.addEventListener("input", (e) => {
+      accent2Hex.value = e.target.value;
+      updateAccentSecondary(e.target.value);
+    });
+    accent2Hex.addEventListener("input", (e) => {
+      if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+        accent2Color.value = e.target.value;
+        updateAccentSecondary(e.target.value);
+      }
+    });
+  }
+
+  // Live Dynamic Hue Shifter Wheel Slider
+  const hueShifter = document.getElementById("studio-hue-shifter");
+  const valHueShifter = document.getElementById("val-studio-hue");
+  if (hueShifter) {
+    hueShifter.addEventListener("input", (e) => {
+      const hue = e.target.value;
+      const color = `hsl(${hue}, 88%, 56%)`;
+      const glow = `hsla(${hue}, 88%, 56%, 0.45)`;
+
+      document.documentElement.style.setProperty("--accent-primary", color);
+      document.documentElement.style.setProperty("--accent-glow", glow);
+      if (valHueShifter) valHueShifter.textContent = `${hue}°`;
+
+      const hex = hslToHex(Number(hue), 88, 56);
+      if (accentColor) accentColor.value = hex;
+      if (accentHex) accentHex.value = hex;
+
+      const curBg = bgHex ? bgHex.value : "#070913";
+      document.documentElement.style.setProperty(
+        "--bg-gradient",
+        `radial-gradient(circle at 50% 0%, color-mix(in srgb, ${color} 14%, ${curBg}) 0%, ${curBg} 85%)`
+      );
+
+      updateStudioSwatchesFromInputs();
     });
   }
 
@@ -1224,8 +1507,16 @@ function initThemeStudio() {
       if (nameInput) nameInput.value = p.name;
 
       document.documentElement.style.setProperty("--bg-base", p.bg);
+      document.documentElement.style.setProperty(
+        "--bg-gradient",
+        `radial-gradient(circle at 50% 0%, color-mix(in srgb, ${p.accent} 14%, ${p.bg}) 0%, ${p.bg} 85%)`
+      );
       document.documentElement.style.setProperty("--accent-primary", p.accent);
       document.documentElement.style.setProperty("--accent-glow", hexToRgba(p.accent, 0.5));
+      if (p.accent2) {
+        document.documentElement.style.setProperty("--accent-secondary", p.accent2);
+        document.documentElement.style.setProperty("--progress-gradient", `linear-gradient(90deg, ${p.accent2}, ${p.accent})`);
+      }
       document.documentElement.style.setProperty("--liquid-blob-1", p.blob1);
       document.documentElement.style.setProperty("--liquid-blob-2", p.blob2);
       document.documentElement.style.setProperty("--liquid-blob-3", p.blob3);
@@ -1235,6 +1526,7 @@ function initThemeStudio() {
         name: p.name,
         bg: p.bg,
         accent: p.accent,
+        accent2: p.accent2,
         blob1: p.blob1,
         blob2: p.blob2,
         blob3: p.blob3,
@@ -1252,15 +1544,20 @@ function initThemeStudio() {
       const nameInput = document.getElementById("studio-theme-name");
       const bgInput = document.getElementById("studio-bg-hex");
       const accentInput = document.getElementById("studio-accent-hex");
+      const accent2Input = document.getElementById("studio-accent2-hex");
       const b1 = document.getElementById("studio-blob1-hex");
       const b2 = document.getElementById("studio-blob2-hex");
       const b3 = document.getElementById("studio-blob3-hex");
       const b4 = document.getElementById("studio-blob4-hex");
 
       const themeId = editingCustomThemeId || ("custom_" + Date.now());
+      const rawName = nameInput ? nameInput.value.trim() : "";
+      const validName = rawName || "Custom Liquid Spectrum";
+      if (nameInput) nameInput.value = validName;
+
       const newTheme = {
         id: themeId,
-        name: nameInput ? nameInput.value.trim() : "Custom Theme",
+        name: validName,
         bg: bgInput ? bgInput.value : "#070913",
         surface: hexToRgba(bgInput ? bgInput.value : "#070913", 0.6),
         blob1: b1 ? b1.value : "#6366f1",
@@ -1268,6 +1565,7 @@ function initThemeStudio() {
         blob3: b3 ? b3.value : "#06b6d4",
         blob4: b4 ? b4.value : "#3b82f6",
         accent: accentInput ? accentInput.value : "#06b6d4",
+        accent2: accent2Input ? accent2Input.value : "#8b5cf6",
         accentGlow: hexToRgba(accentInput ? accentInput.value : "#06b6d4", 0.5),
         glassBg: "rgba(255, 255, 255, 0.08)",
         glassBorder: hexToRgba(accentInput ? accentInput.value : "#06b6d4", 0.3),
@@ -1316,14 +1614,20 @@ function initThemeStudio() {
         "--blob3-size",
         "--blob4-size",
         "--bg-base",
+        "--bg-gradient",
         "--accent-primary",
         "--accent-glow",
+        "--accent-secondary",
+        "--progress-gradient",
         "--liquid-blob-1",
         "--liquid-blob-2",
         "--liquid-blob-3",
         "--liquid-blob-4"
       ];
       overrideProps.forEach((prop) => document.documentElement.style.removeProperty(prop));
+
+      THEMES = JSON.parse(JSON.stringify(DEFAULT_THEMES));
+      loadCustomThemesFromStorage();
 
       blobs[0].baseRadius = 280;
       blobs[1].baseRadius = 340;
@@ -1332,6 +1636,8 @@ function initThemeStudio() {
       fluidSpeedMultiplier = 1.0;
       harmonicDrift = 35;
 
+      const conf = THEMES[currentTheme] || DEFAULT_THEMES.cosmic;
+      syncStudioWithActiveTheme(conf);
       applyTheme(currentTheme);
       showToast("Studio parameters restored to theme defaults ✨");
     });
@@ -1473,8 +1779,18 @@ function initLandingComponents() {
   const dismissBtn = document.getElementById("btn-dismiss-demo-modal");
   const confirmBtn = document.getElementById("btn-confirm-demo-modal");
 
-  function openDemoModal() { if (modal) modal.classList.add("active"); }
-  function closeDemoModal() { if (modal) modal.classList.remove("active"); }
+  function openDemoModal() {
+    if (modal) {
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+    }
+  }
+  function closeDemoModal() {
+    if (modal) {
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+    }
+  }
 
   [openBtn1, openBtn2].forEach((btn) => { if (btn) btn.addEventListener("click", openDemoModal); });
   [closeBtn, dismissBtn, confirmBtn].forEach((btn) => {
@@ -1492,11 +1808,16 @@ function initLandingComponents() {
     });
   }
 
-  // Audio Player
+  // Audio Player & Liquid Soundscape
   const playBtn = document.getElementById("audio-play-toggle");
   const playIcon = document.getElementById("play-icon");
   const eqBars = document.querySelectorAll(".eq-bar");
-  let isPlaying = true;
+  let isPlaying = false; // Synchronized with HTML initial '▶' icon state
+
+  if (playIcon) playIcon.textContent = "▶";
+  eqBars.forEach((bar) => {
+    bar.style.animationPlayState = "paused";
+  });
 
   if (playBtn) {
     playBtn.addEventListener("click", () => {
@@ -1509,8 +1830,81 @@ function initLandingComponents() {
     });
   }
 
-  // Segmented Controls
-  document.querySelectorAll(".liquid-segmented-control").forEach((control) => {
+  // Audio Track Cycling (Prev / Next)
+  const tracks = [
+    { title: "Ethereal Refraction", artist: "Aura Fluid Synthesis" },
+    { title: "Chromatic Dispersion", artist: "Prism Waves Ensemble" },
+    { title: "Subsurface Resonance", artist: "Liquid Ambient Labs" },
+    { title: "Crown Glass Harmonics", artist: "Refraction Collective" }
+  ];
+  let currentTrackIdx = 0;
+  const prevBtn = document.getElementById("audio-prev");
+  const nextBtn = document.getElementById("audio-next");
+  const trackTitleEl = document.querySelector(".track-details .track-title");
+  const trackArtistEl = document.querySelector(".track-details .track-artist");
+
+  function updateTrack(idx) {
+    currentTrackIdx = (idx + tracks.length) % tracks.length;
+    const t = tracks[currentTrackIdx];
+    if (trackTitleEl) trackTitleEl.textContent = t.title;
+    if (trackArtistEl) trackArtistEl.textContent = t.artist;
+    showToast(`Track: "${t.title}" 🎵`);
+  }
+
+  if (prevBtn) prevBtn.addEventListener("click", () => updateTrack(currentTrackIdx - 1));
+  if (nextBtn) nextBtn.addEventListener("click", () => updateTrack(currentTrackIdx + 1));
+
+  // Bento 4: Surface Sensors Switches
+  const toggleMotion = document.getElementById("toggle-motion");
+  if (toggleMotion) {
+    toggleMotion.addEventListener("change", (e) => {
+      motionEnabled = e.target.checked;
+      fluidSpeedMultiplier = motionEnabled ? 1.0 : 0.0;
+      const speedSlider = document.getElementById("studio-flow-speed");
+      const speedVal = document.getElementById("val-studio-speed");
+      if (speedSlider) speedSlider.value = motionEnabled ? 10 : 0;
+      if (speedVal) speedVal.textContent = motionEnabled ? "1.0x" : "0.0x";
+      showToast(motionEnabled ? "Fluid motion drift enabled 🌊" : "Fluid motion frozen ❄️");
+    });
+  }
+
+  const toggleChromatic = document.getElementById("toggle-chromatic");
+  if (toggleChromatic) {
+    toggleChromatic.addEventListener("change", (e) => {
+      const active = e.target.checked;
+      document.body.classList.toggle("no-chromatic", !active);
+      document.documentElement.style.setProperty("--glass-saturation", active ? "180%" : "100%");
+      showToast(active ? "Chromatic refraction prism active 🌈" : "Chromatic refraction subdued");
+    });
+  }
+
+  const toggleNoiseBento = document.getElementById("toggle-noise");
+  const grainOverlay = document.querySelector(".glass-grain-overlay");
+  if (toggleNoiseBento && grainOverlay) {
+    toggleNoiseBento.addEventListener("change", (e) => {
+      const active = e.target.checked;
+      grainOverlay.style.display = active ? "block" : "none";
+      const studioNoise = document.getElementById("studio-toggle-noise");
+      if (studioNoise) studioNoise.checked = active;
+      showToast(active ? "Micro-grain surface noise enabled 🔍" : "Micro-grain surface noise disabled");
+    });
+  }
+
+  // Pricing Cards Action Buttons
+  document.querySelectorAll(".pricing-card .liquid-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".pricing-card");
+      const tierName = card?.querySelector(".tier-name")?.textContent || "Selected Plan";
+      showToast(`Selected "${tierName}" — Connecting to checkout... ✨`);
+      const contactSelect = document.querySelector(".liquid-select");
+      if (contactSelect) contactSelect.value = "saas";
+      const contactSection = document.getElementById("contact");
+      if (contactSection) contactSection.scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  // Segmented Controls (excluding mini-seg which has dedicated telemetry listener)
+  document.querySelectorAll(".liquid-segmented-control:not(.mini-seg)").forEach((control) => {
     const buttons = control.querySelectorAll(".seg-btn");
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -1555,19 +1949,139 @@ function initLandingComponents() {
 }
 
 /* ------------------------------------------------------------
-   14. BOTTOM-RIGHT SWIPEABLE & DISMISSIBLE TOASTS (POINT 3)
+   14. BOTTOM-RIGHT SWIPEABLE & DISMISSIBLE TOASTS WITH STACK DECK
    ------------------------------------------------------------ */
+
+function updateToastStack() {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toasts = Array.from(container.querySelectorAll(".glass-toast:not(.dismissing)"));
+  const count = toasts.length;
+
+  if (count <= 3) {
+    // 1, 2, or 3 toasts: show all as normal individual cards without stack deck
+    container.classList.remove("is-stacked");
+    toasts.forEach((t, i) => {
+      const relIdx = count - 1 - i;
+      t.setAttribute("data-toast-pos", relIdx.toString());
+      t.classList.remove("has-deck");
+      t.style.display = "";
+
+      const stackPill = t.querySelector(".toast-stack-pill");
+      if (stackPill) stackPill.style.display = "none";
+
+      const deckLayers = t.querySelector(".toast-deck-layers");
+      if (deckLayers) deckLayers.style.display = "none";
+    });
+  } else {
+    // More than 3 toasts (4 or more):
+    // Show top 2 newest as normal cards,
+    // and the 3rd toast holds the stack deck below it,
+    // hiding older toasts (4th, 5th, etc.) into the deck with a +N badge!
+    container.classList.add("is-stacked");
+
+    const newestIdx = count - 1;
+    const secondNewestIdx = count - 2;
+    const deckBaseIdx = count - 3; // The 3rd visible toast
+
+    toasts.forEach((t, i) => {
+      const stackPill = t.querySelector(".toast-stack-pill");
+      const deckLayers = t.querySelector(".toast-deck-layers");
+
+      if (i === newestIdx) {
+        // Position 0 (Newest toast, normal card)
+        t.setAttribute("data-toast-pos", "0");
+        t.classList.remove("has-deck");
+        t.style.display = "";
+        if (stackPill) stackPill.style.display = "none";
+        if (deckLayers) deckLayers.style.display = "none";
+      } else if (i === secondNewestIdx) {
+        // Position 1 (2nd newest toast, normal card)
+        t.setAttribute("data-toast-pos", "1");
+        t.classList.remove("has-deck");
+        t.style.display = "";
+        if (stackPill) stackPill.style.display = "none";
+        if (deckLayers) deckLayers.style.display = "none";
+      } else if (i === deckBaseIdx) {
+        // Position 2 (3rd toast: Deck Base with layered tabs below it)
+        t.setAttribute("data-toast-pos", "deck-base");
+        t.classList.add("has-deck");
+        t.style.display = "";
+        if (deckLayers) deckLayers.style.display = "block";
+
+        const olderCount = count - 3;
+        if (stackPill) {
+          if (olderCount > 0) {
+            stackPill.textContent = `+${olderCount}`;
+            stackPill.style.display = "inline-flex";
+            stackPill.title = `${olderCount} older notification(s) in deck. Click to cycle.`;
+          } else {
+            stackPill.style.display = "none";
+          }
+        }
+      } else {
+        // Older toasts (> 3) are nested behind in the deck
+        t.setAttribute("data-toast-pos", "deck-hidden");
+        t.classList.remove("has-deck");
+        t.style.display = "none";
+        if (stackPill) stackPill.style.display = "none";
+        if (deckLayers) deckLayers.style.display = "none";
+      }
+    });
+  }
+}
 
 function showToast(message) {
   const container = document.getElementById("toast-container");
   if (!container) return;
 
+  // Format message text and smart title
+  let title = "Notification";
+  let body = message;
+
+  if (typeof message === "string") {
+    if (message.includes("Message sent")) {
+      title = "Message Sent";
+      body = "Your message has been sent. We'll get back to you soon.";
+    } else if (message.includes("Theme") || message.includes("theme")) {
+      title = "Theme Studio";
+    } else if (message.includes("Clipboard") || message.includes("Copied") || message.includes("copied")) {
+      title = "Clipboard";
+    } else if (message.includes("Pricing") || message.includes("pricing")) {
+      title = "Pricing Plan";
+    } else if (message.includes("Preview")) {
+      title = "Preview Mode";
+    } else if (message.includes("Audio") || message.includes("audio")) {
+      title = "Soundscape";
+    } else if (message.includes("Telemetry") || message.includes("Dashboard")) {
+      title = "Analytics";
+    } else if (message.includes("Standard View") || message.includes("Restored")) {
+      title = "View Restored";
+    }
+  }
+
   const toast = document.createElement("div");
   toast.className = "glass-toast";
   toast.innerHTML = `
+    <div class="toast-deck-layers" aria-hidden="true">
+      <div class="toast-deck-layer deck-layer-3"></div>
+      <div class="toast-deck-layer deck-layer-2"></div>
+      <div class="toast-deck-layer deck-layer-1"></div>
+    </div>
     <div class="toast-content-wrap">
-      <span class="toast-dot" style="width:8px; height:8px; border-radius:50%; background:var(--accent-primary); box-shadow:0 0 8px var(--accent-primary); flex-shrink:0;"></span>
-      <span>${message}</span>
+      <div class="toast-icon-box">
+        <svg class="toast-check-svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <div class="toast-text-group">
+        <div class="toast-title-row">
+          <span class="toast-title">${escapeHtml(title)}</span>
+          <span class="toast-stack-pill" style="display:none;"></span>
+        </div>
+        <span class="toast-message-text">${escapeHtml(body)}</span>
+      </div>
     </div>
     <button class="toast-close-btn" aria-label="Dismiss toast">✕</button>
   `;
@@ -1577,6 +2091,23 @@ function showToast(message) {
   closeBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     dismissToastWithAnimation(toast);
+  });
+
+  // Clicking on the deck base rotates older hidden notifications forward
+  toast.addEventListener("click", (e) => {
+    if (e.target.closest(".toast-close-btn")) return;
+    if (toast.getAttribute("data-toast-pos") === "deck-base") {
+      const allToasts = Array.from(container.querySelectorAll(".glass-toast:not(.dismissing)"));
+      if (allToasts.length > 3) {
+        // Bring the oldest hidden toast to the deck position
+        const hiddenToasts = allToasts.slice(0, allToasts.length - 3);
+        if (hiddenToasts.length > 0) {
+          const nextToast = hiddenToasts[hiddenToasts.length - 1];
+          container.insertBefore(nextToast, toast.nextSibling);
+          updateToastStack();
+        }
+      }
+    }
   });
 
   // Swipe / Drag to right gesture
@@ -1607,8 +2138,8 @@ function showToast(message) {
     if (currentDeltaX > 50) {
       dismissToastWithAnimation(toast);
     } else {
-      toast.style.transform = "translateX(0)";
-      toast.style.opacity = "1";
+      toast.style.transform = "";
+      toast.style.opacity = "";
     }
   }
 
@@ -1639,20 +2170,31 @@ function showToast(message) {
   toast.addEventListener("touchend", onDragEnd);
 
   container.appendChild(toast);
+  updateToastStack();
 
-  // Auto-dismiss after 4.5s
+  // Auto-dismiss after 4.5s (exact original timing preserved)
   const autoTimeout = setTimeout(() => {
     dismissToastWithAnimation(toast);
   }, 4500);
 
   function dismissToastWithAnimation(targetToast) {
     clearTimeout(autoTimeout);
+    if (targetToast.classList.contains("dismissing")) return;
+    targetToast.classList.add("dismissing");
     targetToast.style.transition = "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease";
     targetToast.style.transform = "translateX(120%)";
     targetToast.style.opacity = "0";
-    setTimeout(() => { targetToast.remove(); }, 320);
+    targetToast.style.pointerEvents = "none";
+    updateToastStack();
+    setTimeout(() => {
+      targetToast.remove();
+      updateToastStack();
+    }, 320);
   }
 }
+
+window.showToast = showToast;
+export { showToast };
 
 /* ------------------------------------------------------------
    14. ANALYTICS DASHBOARD CHART ENGINE
@@ -1772,6 +2314,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initScrollSpy();
   initModeToggle();
   initMobileNav();
+  initHeaderScroll();
   initZenPreviewMode();
   initThemeListeners();
   initThemeStudio();
@@ -1781,7 +2324,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadCustomThemesFromStorage();
   updateTotalThemesCounter();
-  applyTheme(currentTheme);
+  applyTheme(currentTheme, true);
 
   const params = new URLSearchParams(window.location.search);
   const scrollTarget = params.get("scroll") || (window.location.hash ? window.location.hash.substring(1) : null);

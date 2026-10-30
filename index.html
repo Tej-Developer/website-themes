@@ -50,10 +50,13 @@
     </div>
 
     <!-- Floating Clean Preview Mode Exit Pill (Shown only in Zen Mode) -->
-    <div id="zen-exit-pill" class="zen-exit-pill liquid-card" aria-hidden="true">
-      <span class="zen-icon">👁️</span>
-      <span class="zen-status-text">Clean Preview Mode Active</span>
-      <button id="btn-exit-zen" class="liquid-btn btn-sm btn-primary">
+    <div id="zen-exit-pill" class="zen-exit-pill liquid-card" aria-hidden="true" role="region" aria-label="Clean Preview Mode">
+      <span class="zen-icon" aria-hidden="true">👁️</span>
+      <span class="zen-status-text">
+        <span class="zen-label-desktop">Clean Preview Mode Active</span>
+        <span class="zen-label-mobile">Preview Active</span>
+      </span>
+      <button id="btn-exit-zen" class="liquid-btn btn-sm btn-primary" aria-label="Exit preview mode">
         <span>Exit Preview ✕</span>
       </button>
     </div>
@@ -268,12 +271,13 @@
               <defs>
                 <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="var(--accent-primary)" stop-opacity="0.45" />
-                  <stop offset="100%" stop-color="var(--accent-primary)" stop-opacity="0.0" />
+                  <stop offset="60%" stop-color="var(--accent-secondary, var(--accent-primary))" stop-opacity="0.2" />
+                  <stop offset="100%" stop-color="var(--accent-secondary, var(--accent-primary))" stop-opacity="0.0" />
                 </linearGradient>
                 <linearGradient id="chartStroke" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="var(--liquid-blob-1)" />
-                  <stop offset="50%" stop-color="var(--accent-primary)" />
-                  <stop offset="100%" stop-color="var(--liquid-blob-3)" />
+                  <stop offset="0%" stop-color="var(--accent-primary)" />
+                  <stop offset="50%" stop-color="var(--accent-secondary, var(--accent-primary))" />
+                  <stop offset="100%" stop-color="var(--accent-primary)" />
                 </linearGradient>
               </defs>
               <!-- Chart Grid Lines -->
@@ -655,7 +659,11 @@
                     </div>
                     <div class="swatch-item">
                       <div class="swatch-circle" id="swatch-disp-acc"></div>
-                      <span>Accent</span>
+                      <span>Accent 1</span>
+                    </div>
+                    <div class="swatch-item">
+                      <div class="swatch-circle" id="swatch-disp-acc2"></div>
+                      <span>Accent 2</span>
                     </div>
                   </div>
                 </div>
