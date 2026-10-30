@@ -1,0 +1,1641 @@
+<!doctype html>
+<html lang="en" data-theme="cosmic" data-mode="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting to Liquid Glass Studio...</title>
+    <meta http-equiv="refresh" content="0; url=/themes/liquid-glass/" />
+    <meta name="description" content="A next-generation showcase website featuring ultra-tactile liquid glass effects, fluid refraction, Dark/Light modes, deep customizer studio, and full landing page components." />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="./glass.css" />
+  </head>
+  <body>
+    <!-- Hidden SVG Filters for Liquid Glass Refraction & Noise -->
+    <svg class="svg-filters" aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">
+      <defs>
+        <!-- Fine Glass Frost Noise -->
+        <filter id="glass-noise">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" result="noise" />
+          <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.04 0" />
+        </filter>
+        <!-- Liquid Glass Edge Distortion -->
+        <filter id="liquid-warp">
+          <feTurbulence type="turbulence" baseFrequency="0.015 0.02" numOctaves="2" seed="5" result="warp" />
+          <feDisplacementMap in="SourceGraphic" in2="warp" scale="12" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Liquid Refraction Mouse Follower Orb -->
+    <div id="liquid-cursor-follower" class="liquid-cursor-follower" aria-hidden="true"></div>
+
+    <!-- Interactive Fluid Background Canvas -->
+    <canvas id="liquid-canvas"></canvas>
+
+    <!-- Ambient Glowing Liquid Blobs -->
+    <div class="liquid-ambient-mesh" aria-hidden="true">
+      <div class="liquid-blob blob-1" id="dom-blob-1"></div>
+      <div class="liquid-blob blob-2" id="dom-blob-2"></div>
+      <div class="liquid-blob blob-3" id="dom-blob-3"></div>
+      <div class="liquid-blob blob-4" id="dom-blob-4"></div>
+      <!-- Subtle Floating Glass Droplets -->
+      <div class="glass-bubble bubble-1"></div>
+      <div class="glass-bubble bubble-2"></div>
+      <div class="glass-bubble bubble-3"></div>
+      <div class="glass-grain-overlay"></div>
+    </div>
+
+    <!-- Floating Clean Preview Mode Exit Pill (Shown only in Zen Mode) -->
+    <div id="zen-exit-pill" class="zen-exit-pill liquid-card" aria-hidden="true" role="region" aria-label="Clean Preview Mode">
+      <span class="zen-icon" aria-hidden="true">👁️</span>
+      <span class="zen-status-text">
+        <span class="zen-label-desktop">Clean Preview Mode Active</span>
+        <span class="zen-label-mobile">Preview Active</span>
+      </span>
+      <button id="btn-exit-zen" class="liquid-btn btn-sm btn-primary" aria-label="Exit preview mode">
+        <span>Exit Preview ✕</span>
+      </button>
+    </div>
+
+    <!-- Main Application Container -->
+    <div class="app-layout">
+      
+      <!-- Top Floating Liquid Glass Navbar -->
+      <header class="glass-navbar-wrapper">
+        <nav class="glass-navbar liquid-card" id="main-nav">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="/" class="liquid-btn btn-sm btn-glass hub-back-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 600; border-radius: 9999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); color: var(--text-primary); transition: all 0.2s ease;">
+              <span>← Hub Portal</span>
+            </a>
+            <a href="#showcase" class="nav-brand">
+              <div class="liquid-logo">
+                <span class="logo-drop"></span>
+                <span class="logo-glow"></span>
+              </div>
+              <div class="brand-text">
+                <span class="brand-title">AETHER</span>
+                <span class="brand-badge">LIQUID GLASS</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Desktop Navigation Links (Clean, uncrowded) -->
+          <div class="nav-links">
+            <a href="#showcase" class="nav-link active">Showcase</a>
+            <a href="#dashboard" class="nav-link">Dashboard</a>
+            <a href="#studio" class="nav-link nav-link-highlight">🎨 Theme Studio</a>
+            <a href="#pricing" class="nav-link">Pricing</a>
+            <a href="#themes" class="nav-link">Presets</a>
+            <a href="#components" class="nav-link">Components</a>
+          </div>
+
+          <!-- Desktop Navigation Actions -->
+          <div class="nav-actions">
+            <!-- Dark / Light Mode Toggle Button -->
+            <button class="glass-mode-btn" id="btn-mode-toggle" title="Toggle Dark/Light Mode">
+              <span class="mode-icon mode-moon">🌙</span>
+              <span class="mode-icon mode-sun">☀️</span>
+              <span class="mode-text" id="mode-text-label">Dark</span>
+            </button>
+
+            <!-- Active Theme Indicator Pill -->
+            <div class="active-theme-pill" id="theme-pill" title="Current active theme">
+              <span class="pill-dot"></span>
+              <span class="pill-label" id="current-theme-name">Midnight Cosmic</span>
+            </div>
+
+            <!-- Hamburger Button for Mobile/Tablet -->
+            <button class="mobile-hamburger-btn" id="btn-mobile-menu" aria-label="Open navigation menu">
+              <span class="ham-line"></span>
+              <span class="ham-line"></span>
+              <span class="ham-line"></span>
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <!-- Mobile Navigation Drawer / Liquid Glass Sheet -->
+      <div class="mobile-nav-backdrop" id="mobile-nav-backdrop" aria-hidden="true">
+        <div class="mobile-nav-drawer liquid-card" id="mobile-nav-drawer">
+          <div class="mobile-drawer-header">
+            <div class="nav-brand">
+              <div class="liquid-logo">
+                <span class="logo-drop"></span>
+              </div>
+              <div class="brand-text">
+                <span class="brand-title">AETHER</span>
+                <span class="brand-badge">LIQUID GLASS</span>
+              </div>
+            </div>
+            <button class="modal-close-btn" id="btn-close-mobile-nav" aria-label="Close menu">✕</button>
+          </div>
+
+          <div class="mobile-drawer-links">
+            <a href="#showcase" class="mobile-nav-link active">Showcase</a>
+            <a href="#dashboard" class="mobile-nav-link">Dashboard</a>
+            <a href="#studio" class="mobile-nav-link highlight">🎨 Theme Studio & Customizer</a>
+            <a href="#sandbox" class="mobile-nav-link">The Glass Lab</a>
+            <a href="#pricing" class="mobile-nav-link">Pricing Plans</a>
+            <a href="#themes" class="mobile-nav-link">Theme Presets</a>
+            <a href="#components" class="mobile-nav-link">UI Kitchen Sink</a>
+            <a href="#contact" class="mobile-nav-link">Contact Form</a>
+            <a href="#tokens" class="mobile-nav-link">Token Schema</a>
+          </div>
+
+          <div class="mobile-drawer-footer">
+            <button class="liquid-btn btn-glass btn-full" id="btn-mobile-mode-toggle">
+              <span class="mobile-mode-icon">🌙</span>
+              <span class="mobile-mode-text">Toggle Dark / Light Mode</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Section -->
+      <section class="hero-section" id="showcase">
+        <div class="hero-content">
+          <div class="liquid-pill-badge" id="hero-badge">
+            <span class="liquid-orb"></span>
+            <span class="badge-text">v2.6 Liquid Glass System • Dedicated Studio Page & Responsive Architecture</span>
+            <span class="badge-arrow">→</span>
+          </div>
+
+          <h1 class="hero-title">
+            Refract Reality with <br />
+            <span class="gradient-text liquid-sheen-text">Liquid Glass</span> Design.
+          </h1>
+
+          <p class="hero-subtitle">
+            An ultra-tactile dummy website built with fluid dispersion, specular lighting, Dark & Light modes, 
+            and a complete dedicated Theme Studio for in-depth customization from fluid blobs to typography.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#studio" class="liquid-btn btn-primary btn-lg">
+              <span class="btn-shine"></span>
+              <span>🎨 Open Theme Studio Page</span>
+            </a>
+            <button class="liquid-btn btn-glass btn-lg" id="btn-trigger-modal-demo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+              </svg>
+              <span>Preview Glass Modal ✨</span>
+            </button>
+            <a href="#pricing" class="liquid-btn btn-outline btn-lg">
+              <span>View Pricing Plans</span>
+            </a>
+          </div>
+
+          <!-- Hero Metrics Bar -->
+          <div class="hero-stats-strip liquid-card">
+            <div class="stat-item">
+              <div class="stat-num" id="fps-counter">60 <span class="stat-unit">FPS</span></div>
+              <div class="stat-label">Fluid Physics Rate</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-num">1.52 <span class="stat-unit">IOR</span></div>
+              <div class="stat-label">Crown Glass Refraction</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-num" id="total-themes-counter">12+ <span class="stat-unit">Themes</span></div>
+              <div class="stat-label">Presets & Custom Studio</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-num" id="stat-active-mode">Dark <span class="stat-unit">Mode</span></div>
+              <div class="stat-label">Adaptive Luminosity</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Interactive Glass Analytics Dashboard -->
+      <section class="section-container" id="dashboard">
+        <div class="section-header">
+          <div class="section-tag">SaaS DASHBOARD TEMPLATE</div>
+          <h2 class="section-heading">Liquid Glass Analytics Dashboard</h2>
+          <p class="section-desc">A complete dashboard preview showing how charts, metrics, and live feeds look when built with the liquid glass effect in both Dark and Light modes.</p>
+        </div>
+
+        <div class="dashboard-preview-card liquid-card tilt-card">
+          <div class="card-specular-glare"></div>
+          
+          <div class="dashboard-header-bar">
+            <div class="dash-title-group">
+              <div class="dash-icon-orb">📊</div>
+              <div>
+                <h3 class="dash-title">Platform Performance Matrix</h3>
+                <p class="dash-subtitle">Live subsurface telemetry & dispersion analytics</p>
+              </div>
+            </div>
+            <div class="dash-actions">
+              <div class="live-status-pill">
+                <span class="pulsing-green-dot"></span> LIVE TELEMETRY
+              </div>
+              <div class="liquid-segmented-control mini-seg">
+                <button class="seg-btn active" data-chart-range="7d">7 Days</button>
+                <button class="seg-btn" data-chart-range="30d">30 Days</button>
+                <button class="seg-btn" data-chart-range="1y">1 Year</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Mini Metric Cards -->
+          <div class="dash-metrics-row">
+            <div class="dash-metric-box">
+              <div class="metric-label">Total Surface Volume</div>
+              <div class="metric-val">$148,820</div>
+              <div class="metric-sub positive">↑ +24.6% this cycle</div>
+            </div>
+            <div class="dash-metric-box">
+              <div class="metric-label">Refraction Coherence</div>
+              <div class="metric-val">99.84%</div>
+              <div class="metric-sub positive">↑ +1.2% zero loss</div>
+            </div>
+            <div class="dash-metric-box">
+              <div class="metric-label">Active Glass Shards</div>
+              <div class="metric-val">14,290</div>
+              <div class="metric-sub neutral">• Real-time mesh nodes</div>
+            </div>
+          </div>
+
+          <!-- Interactive SVG Liquid Chart -->
+          <div class="dash-chart-container">
+            <div class="chart-tooltip" id="chart-tooltip">
+              <span class="tooltip-date">May 14</span>
+              <span class="tooltip-val">$38,420 • 99.4%</span>
+            </div>
+            <svg class="liquid-chart-svg" viewBox="0 0 800 240" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="var(--accent-primary)" stop-opacity="0.45" />
+                  <stop offset="60%" stop-color="var(--accent-secondary, var(--accent-primary))" stop-opacity="0.2" />
+                  <stop offset="100%" stop-color="var(--accent-secondary, var(--accent-primary))" stop-opacity="0.0" />
+                </linearGradient>
+                <linearGradient id="chartStroke" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="var(--accent-primary)" />
+                  <stop offset="50%" stop-color="var(--accent-secondary, var(--accent-primary))" />
+                  <stop offset="100%" stop-color="var(--accent-primary)" />
+                </linearGradient>
+              </defs>
+              <!-- Chart Grid Lines -->
+              <line x1="0" y1="60" x2="800" y2="60" stroke="var(--glass-border)" stroke-dasharray="4" opacity="0.4" />
+              <line x1="0" y1="120" x2="800" y2="120" stroke="var(--glass-border)" stroke-dasharray="4" opacity="0.4" />
+              <line x1="0" y1="180" x2="800" y2="180" stroke="var(--glass-border)" stroke-dasharray="4" opacity="0.4" />
+              <!-- Chart Area & Line -->
+              <path class="chart-area" d="M 0,190 Q 120,70 240,110 T 480,50 T 720,130 L 800,80 L 800,240 L 0,240 Z" fill="url(#chartGradient)"></path>
+              <path class="chart-line" d="M 0,190 Q 120,70 240,110 T 480,50 T 720,130 L 800,80" fill="none" stroke="url(#chartStroke)" stroke-width="3.5" stroke-linecap="round"></path>
+              <!-- Interactive Hotspots -->
+              <circle class="chart-point" cx="240" cy="110" r="6" />
+              <circle class="chart-point" cx="480" cy="50" r="6" />
+              <circle class="chart-point" cx="720" cy="130" r="6" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           DEDICATED SECTION / PAGE: THEME STUDIO & DEEP CUSTOMIZER
+           ============================================================ -->
+      <section class="section-container" id="studio">
+        <div class="section-header">
+          <div class="section-tag">FULL CUSTOMIZER STUDIO</div>
+          <h2 class="section-heading">Theme Studio & Deep Customizer</h2>
+          <p class="section-desc">Customize every design layer: individual fluid blob colors & sizes, glass refraction physics, corner radii, and typography scales with live instant preview across the entire website.</p>
+        </div>
+
+        <div class="studio-card liquid-card">
+          <!-- Studio Header & Quick Preset Toolbar -->
+          <div class="studio-top-bar">
+            <div class="studio-title-wrap">
+              <span class="studio-icon">🎨</span>
+              <div>
+                <h3 class="studio-title">Active Spectrum Studio</h3>
+                <span class="studio-badge" id="studio-active-badge">Editing: Midnight Cosmic</span>
+              </div>
+            </div>
+
+            <!-- Quick Inspirations Bar -->
+            <div class="studio-presets-row">
+              <span class="preset-label">Inspirations:</span>
+              <button class="palette-pill" data-preset="matcha">🍵 Matcha Zen</button>
+              <button class="palette-pill" data-preset="crimson">🩸 Crimson</button>
+              <button class="palette-pill" data-preset="glacier">❄️ Glacier</button>
+              <button class="palette-pill" data-preset="tokyo">🌆 Tokyo Cyber</button>
+              <button class="palette-pill" data-preset="amber">🍯 Amber</button>
+              <button class="palette-pill" data-preset="peach">🍑 Sunset Peach</button>
+            </div>
+          </div>
+
+          <!-- Studio Tabs Navigation -->
+          <div class="studio-tabs-nav">
+            <button class="studio-tab-btn active" data-tab="tab-fluid">1. Fluid Blobs Engine</button>
+            <button class="studio-tab-btn" data-tab="tab-glass">2. Glass Physics & Surface</button>
+            <button class="studio-tab-btn" data-tab="tab-type">3. Typography & Scale</button>
+            <button class="studio-tab-btn" data-tab="tab-colors">4. Color Atmosphere</button>
+          </div>
+
+          <!-- Studio Panels Container -->
+          <div class="studio-panels">
+            
+            <!-- PANEL 1: FLUID BLOBS ENGINE -->
+            <div class="studio-panel active" id="tab-fluid">
+              <div class="studio-info-banner">
+                <span class="banner-icon">🌊</span>
+                <div>
+                  <strong>How the Fluid Blobs Engine Works:</strong> An HTML5 Canvas runs in the background simulating 4 independent metaball particles with custom flow equations. As these organic liquid orbs collide and drift, their colors refract through frosted acrylic surfaces, creating live chromatic aberration and dynamic glow across all cards.<br>
+                  <strong>What is customized on the website:</strong> Background glow tones, glass refraction tints, and ambient light distribution behind every component.
+                </div>
+              </div>
+
+              <div class="studio-grid-2">
+                <div class="studio-control-box">
+                  <div class="box-title">Individual Fluid Blob Colors & Scales</div>
+                  
+                  <!-- Blob 1 -->
+                  <div class="blob-config-row">
+                    <label>Blob 1 (Primary Highlight)</label>
+                    <div class="color-picker-row">
+                      <input type="color" id="studio-blob1-color" value="#6366f1" class="liquid-color-input" />
+                      <input type="text" id="studio-blob1-hex" value="#6366f1" class="liquid-input hex-input" />
+                    </div>
+                    <div class="slider-row-inline">
+                      <span>Radius: <strong id="val-blob1-size">280px</strong></span>
+                      <input type="range" id="studio-blob1-size" min="150" max="600" value="280" class="liquid-range" />
+                    </div>
+                    <span class="control-help"><strong>How it works:</strong> Primary dominant metaball.<br><strong>What it customizes:</strong> Sets the high-energy liquid color seen directly behind the hero cards, analytics dashboard, and top navigation.</span>
+                  </div>
+
+                  <!-- Blob 2 -->
+                  <div class="blob-config-row">
+                    <label>Blob 2 (Secondary Harmonic)</label>
+                    <div class="color-picker-row">
+                      <input type="color" id="studio-blob2-color" value="#8b5cf6" class="liquid-color-input" />
+                      <input type="text" id="studio-blob2-hex" value="#8b5cf6" class="liquid-input hex-input" />
+                    </div>
+                    <div class="slider-row-inline">
+                      <span>Radius: <strong id="val-blob2-size">340px</strong></span>
+                      <input type="range" id="studio-blob2-size" min="150" max="600" value="340" class="liquid-range" />
+                    </div>
+                    <span class="control-help"><strong>How it works:</strong> Intersects with Blob 1 in the canvas physics loop.<br><strong>What it customizes:</strong> Creates duotone color blending and gradient transitions across card backdrops.</span>
+                  </div>
+
+                  <!-- Blob 3 -->
+                  <div class="blob-config-row">
+                    <label>Blob 3 (Ambient Glow)</label>
+                    <div class="color-picker-row">
+                      <input type="color" id="studio-blob3-color" value="#06b6d4" class="liquid-color-input" />
+                      <input type="text" id="studio-blob3-hex" value="#06b6d4" class="liquid-input hex-input" />
+                    </div>
+                    <div class="slider-row-inline">
+                      <span>Radius: <strong id="val-blob3-size">260px</strong></span>
+                      <input type="range" id="studio-blob3-size" min="150" max="600" value="260" class="liquid-range" />
+                    </div>
+                    <span class="control-help"><strong>How it works:</strong> Floats in lower canvas quadrants.<br><strong>What it customizes:</strong> Atmospheric ambient fill for peripheral cards and lower sections.</span>
+                  </div>
+
+                  <!-- Blob 4 -->
+                  <div class="blob-config-row">
+                    <label>Blob 4 (Accent Specular)</label>
+                    <div class="color-picker-row">
+                      <input type="color" id="studio-blob4-color" value="#3b82f6" class="liquid-color-input" />
+                      <input type="text" id="studio-blob4-hex" value="#3b82f6" class="liquid-input hex-input" />
+                    </div>
+                    <div class="slider-row-inline">
+                      <span>Radius: <strong id="val-blob4-size">300px</strong></span>
+                      <input type="range" id="studio-blob4-size" min="150" max="600" value="300" class="liquid-range" />
+                    </div>
+                    <span class="control-help"><strong>How it works:</strong> High-frequency oscillation metaball.<br><strong>What it customizes:</strong> Adds contrast and prism shimmer to card borders and specular glare.</span>
+                  </div>
+                </div>
+
+                <div class="studio-control-box">
+                  <div class="box-title">Simulation Velocity & Fluid Drift</div>
+                  
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-flow-speed">Fluid Flow Velocity</label>
+                      <span class="control-value" id="val-studio-speed">1.0x</span>
+                    </div>
+                    <input type="range" id="studio-flow-speed" min="0" max="30" value="10" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Modulates the delta-time step in <code>requestAnimationFrame</code> (0.0x to 3.0x).<br><strong>What it customizes:</strong> Background motion speed. 0x pauses movement into static art; 1.0x provides calm breathing; 2.5x creates energetic fluid agitation.</span>
+                  </div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-harmonic-drift">Harmonic Drift Amplitude</label>
+                      <span class="control-value" id="val-studio-drift">35px</span>
+                    </div>
+                    <input type="range" id="studio-harmonic-drift" min="10" max="80" value="35" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Sine-wave deviation math applied to blob vectors (10px to 80px).<br><strong>What it customizes:</strong> Turbulence width. Higher values make fluid blobs snake across wider screen areas.</span>
+                  </div>
+
+                  <div class="studio-preview-chip-card">
+                    <span class="chip-badge">PHYSICS ENGINE STATUS</span>
+                    <div class="chip-text">Fluid canvas loop is hardware accelerated on GPU with zero layout thrashing.</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- PANEL 2: GLASS PHYSICS & SURFACE -->
+            <div class="studio-panel" id="tab-glass">
+              <div class="studio-info-banner">
+                <span class="banner-icon">🪟</span>
+                <div>
+                  <strong>How Glass Physics Work:</strong> Combines CSS <code>backdrop-filter</code>, specular reflections, multi-stop glare masks, and surface opacity multipliers. This simulates physical light transmission, internal scattering, and surface refraction.<br>
+                  <strong>What is customized on the website:</strong> Frostiness, clarity, border bevels, corner rounding, and tactile texture on every card, modal, and drawer.
+                </div>
+              </div>
+
+              <div class="studio-grid-2">
+                <div class="studio-control-box">
+                  <div class="box-title">Refraction & Blur Parameters</div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-glass-blur">Glass Blur Depth</label>
+                      <span class="control-value" id="val-studio-blur">22px</span>
+                    </div>
+                    <input type="range" id="studio-glass-blur" min="0" max="60" value="22" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Updates the root <code>--glass-blur</code> token applied to backdrop filters.<br><strong>What it customizes:</strong> Optical scattering behind cards. 0px gives crystal clear acrylic; 30px+ produces luxurious frosted sea-glass.</span>
+                  </div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-glass-opacity">Surface Translucency Multiplier</label>
+                      <span class="control-value" id="val-studio-opacity">1.0x</span>
+                    </div>
+                    <input type="range" id="studio-glass-opacity" min="30" max="250" value="100" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Scales the alpha opacity of the theme's native surface tint via <code>--glass-opacity-multiplier</code>.<br><strong>What it customizes:</strong> Card background transparency without washing out dark themes into milky white.</span>
+                  </div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-glass-specular">Specular Glare Intensity</label>
+                      <span class="control-value" id="val-studio-specular">65%</span>
+                    </div>
+                    <input type="range" id="studio-glass-specular" min="0" max="100" value="65" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Controls the opacity of top inner bevels and cursor-following radial light gradients.<br><strong>What it customizes:</strong> Brightness of the reflective light beam that tracks your mouse across all glass cards.</span>
+                  </div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-glass-saturation">Backdrop Saturation Boost</label>
+                      <span class="control-value" id="val-studio-saturation">180%</span>
+                    </div>
+                    <input type="range" id="studio-glass-saturation" min="100" max="300" value="180" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Applies <code>backdrop-filter: saturate(...)</code> from 100% to 300%.<br><strong>What it customizes:</strong> Color punchiness. Makes colors drifting beneath glass surfaces appear hyper-vivid and radiant.</span>
+                  </div>
+                </div>
+
+                <div class="studio-control-box">
+                  <div class="box-title">Borders, Radii & Tactile Noise</div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-border-width">Glass Border Width</label>
+                      <span class="control-value" id="val-studio-border">1px</span>
+                    </div>
+                    <input type="range" id="studio-border-width" min="0" max="4" value="1" step="0.5" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Sets <code>--glass-border-width</code>.<br><strong>What it customizes:</strong> Contour edge thickness of all cards, buttons, inputs, and modals (0px borderless to 4px bold frame).</span>
+                  </div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-corner-radius">Card Corner Radius</label>
+                      <span class="control-value" id="val-studio-radius">24px</span>
+                    </div>
+                    <input type="range" id="studio-corner-radius" min="8" max="40" value="24" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Updates <code>--glass-corner-radius</code> across the entire document.<br><strong>What it customizes:</strong> Curvature of every card, bento grid item, preset preview, and dashboard card (8px tech bevel to 40px smooth pebble).</span>
+                  </div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label>Surface Tactile Grain</label>
+                    </div>
+                    <label class="liquid-switch-row">
+                      <span class="switch-title">Subtle Micro-Frost Noise</span>
+                      <input type="checkbox" id="studio-toggle-noise" checked class="liquid-toggle-input" />
+                      <span class="liquid-toggle-slider"></span>
+                    </label>
+                    <span class="control-help"><strong>How it works:</strong> Toggles an SVG fractal noise filter layer.<br><strong>What it customizes:</strong> Adds physical tactile grain texture to cards, mimicking genuine etched glass.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 3: TYPOGRAPHY & SCALE -->
+            <div class="studio-panel" id="tab-type">
+              <div class="studio-info-banner">
+                <span class="banner-icon">🔤</span>
+                <div>
+                  <strong>How Typography Customization Works:</strong> Updates CSS root font-family tokens and base rem scaling factors. All text components dynamically compute their hierarchy from these tokens.<br>
+                  <strong>What is customized on the website:</strong> Typeface design style, body reading size, heading prominence, and content density across all viewports.
+                </div>
+              </div>
+
+              <div class="studio-grid-2">
+                <div class="studio-control-box">
+                  <div class="box-title">Font Families & Proportions</div>
+
+                  <div class="sandbox-control-item">
+                    <label class="input-label">Primary Font Family</label>
+                    <select class="liquid-input liquid-select" id="studio-font-family">
+                      <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans (Modern Geometric)</option>
+                      <option value="'Inter', sans-serif">Inter (Clean Neutral)</option>
+                      <option value="'Outfit', sans-serif">Outfit (Futuristic Display)</option>
+                      <option value="'JetBrains Mono', monospace">JetBrains Mono (Technical / Cyber)</option>
+                      <option value="system-ui, -apple-system, sans-serif">System Native Sans</option>
+                    </select>
+                    <span class="control-help"><strong>How it works:</strong> Switches font across all UI elements.<br><strong>What it customizes:</strong> Brand personality. Geometric for modern AI apps; Inter for clean dashboards; JetBrains Mono for developer tools.</span>
+                  </div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-font-size">Base Body Font Size</label>
+                      <span class="control-value" id="val-studio-fontsize">16px</span>
+                    </div>
+                    <input type="range" id="studio-font-size" min="14" max="20" value="16" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Adjusts <code>--font-size-base</code> (14px to 20px).<br><strong>What it customizes:</strong> Base reading size for paragraphs, descriptions, input fields, and metric subtitles.</span>
+                  </div>
+
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-heading-scale">Heading Font Size Scale</label>
+                      <span class="control-value" id="val-studio-headingscale">1.0x</span>
+                    </div>
+                    <input type="range" id="studio-heading-scale" min="80" max="135" value="100" class="liquid-range" />
+                    <span class="control-help"><strong>How it works:</strong> Proportional heading multiplier.<br><strong>What it customizes:</strong> Scale of all h1 hero titles and h2 section headings to match desired visual impact.</span>
+                  </div>
+                </div>
+
+                <div class="studio-control-box">
+                  <div class="box-title">Typography Live Test Bed</div>
+                  <div class="type-preview-container liquid-card">
+                    <h3 class="type-sample-heading">The quick refractive fox jumps.</h3>
+                    <p class="type-sample-body">Liquid glass typography scales dynamically using CSS root tokens, ensuring crisp contrast in both dark and light modes across all responsive viewports.</p>
+                    <div class="type-sample-meta">Sample Font: <span id="type-sample-fontname">Plus Jakarta Sans</span> • 100% Relative EM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 4: COLOR ATMOSPHERE -->
+            <div class="studio-panel" id="tab-colors">
+              <div class="studio-info-banner">
+                <span class="banner-icon">🎨</span>
+                <div>
+                  <strong>How Color Atmosphere Works:</strong> Binds color hex tokens directly to CSS custom properties (<code>--bg-base</code>, <code>--accent-primary</code>, <code>--accent-glow</code>) and syncs them with local storage.<br>
+                  <strong>What is customized on the website:</strong> Deep page background, primary call-to-actions, chart strokes, badge highlights, and active theme pills.
+                </div>
+              </div>
+
+              <div class="studio-grid-2">
+                <div class="studio-control-box">
+                  <div class="box-title">Atmosphere & Accent Palette</div>
+
+                  <div class="input-wrapper">
+                    <label class="input-label">Theme Name</label>
+                    <input type="text" id="studio-theme-name" value="Custom Liquid Theme" class="liquid-input" />
+                    <span class="control-help"><strong>What it customizes:</strong> The display title shown on your custom theme card, in the floating dock, and in the navbar status pill.</span>
+                  </div>
+
+                  <div class="input-wrapper">
+                    <label class="input-label">Background Base Color</label>
+                    <div class="color-picker-row">
+                      <input type="color" id="studio-bg-color" value="#070913" class="liquid-color-input" />
+                      <input type="text" id="studio-bg-hex" value="#070913" class="liquid-input hex-input" />
+                    </div>
+                    <span class="control-help"><strong>How it works:</strong> Sets <code>--bg-base</code>.<br><strong>What it customizes:</strong> Deep background color of the entire website. Choose pitch black for high contrast or deep midnight navy/plum.</span>
+                  </div>
+
+                  <div class="input-wrapper">
+                    <label class="input-label">Primary Accent Highlight</label>
+                    <div class="color-picker-row">
+                      <input type="color" id="studio-accent-color" value="#06b6d4" class="liquid-color-input" />
+                      <input type="text" id="studio-accent-hex" value="#06b6d4" class="liquid-input hex-input" />
+                    </div>
+                    <span class="control-help"><strong>How it works:</strong> Sets <code>--accent-primary</code> and <code>--accent-glow</code>.<br><strong>What it customizes:</strong> Primary buttons, active cards, slider thumbs, chart glow, and focus rings.</span>
+                  </div>
+
+                  <div class="input-wrapper">
+                    <label class="input-label">Secondary Accent</label>
+                    <div class="color-picker-row">
+                      <input type="color" id="studio-accent2-color" value="#8b5cf6" class="liquid-color-input" />
+                      <input type="text" id="studio-accent2-hex" value="#8b5cf6" class="liquid-input hex-input" />
+                    </div>
+                    <span class="control-help"><strong>How it works:</strong> Sets <code>--accent-secondary</code>.<br><strong>What it customizes:</strong> Gradient endpoint for buttons, chart area gradients, and secondary specular highlights.</span>
+                  </div>
+                </div>
+
+                <div class="studio-control-box">
+                  <div class="box-title">Live Dynamic Hue Shifter</div>
+                  
+                  <div class="sandbox-control-item">
+                    <div class="control-header">
+                      <label for="studio-hue-shifter">Accent Color Wheel Slider</label>
+                      <span class="control-value" id="val-studio-hue">Active Hue</span>
+                    </div>
+                    <input type="range" id="studio-hue-shifter" min="0" max="360" value="190" class="liquid-range hue-range" />
+                    <span class="control-help"><strong>How it works:</strong> Shifts the HSL degree wheel across 360°.<br><strong>What it customizes:</strong> Quickly previews all accent colors across the website in real time without manually entering hex values.</span>
+                  </div>
+
+                  <div class="studio-swatches-display">
+                    <div class="swatch-item">
+                      <div class="swatch-circle" id="swatch-disp-bg"></div>
+                      <span>Canvas</span>
+                    </div>
+                    <div class="swatch-item">
+                      <div class="swatch-circle" id="swatch-disp-b1"></div>
+                      <span>Blob 1</span>
+                    </div>
+                    <div class="swatch-item">
+                      <div class="swatch-circle" id="swatch-disp-b2"></div>
+                      <span>Blob 2</span>
+                    </div>
+                    <div class="swatch-item">
+                      <div class="swatch-circle" id="swatch-disp-acc"></div>
+                      <span>Accent 1</span>
+                    </div>
+                    <div class="swatch-item">
+                      <div class="swatch-circle" id="swatch-disp-acc2"></div>
+                      <span>Accent 2</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Studio Actions Bar -->
+          <div class="studio-footer-actions">
+            <div class="actions-left">
+              <button class="liquid-btn btn-glass" id="btn-studio-reset">
+                <span>Reset to Theme Defaults</span>
+              </button>
+              <button class="liquid-btn btn-glass" id="btn-studio-cancel-edit" style="display: none;">
+                <span>Cancel Edit ✕</span>
+              </button>
+              <button class="liquid-btn btn-glass" id="btn-studio-export-css">
+                <span>Export CSS Tokens 📋</span>
+              </button>
+            </div>
+            <div class="actions-right">
+              <button class="liquid-btn btn-primary btn-lg" id="btn-studio-save">
+                <span class="btn-shine"></span>
+                <span>Save as Custom Theme ✨</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Landing Page Pricing Calculator / Tiers (FIXED TEXT & PADDING) -->
+      <section class="section-container" id="pricing">
+        <div class="section-header">
+          <div class="section-tag">LANDING PAGE TEMPLATE</div>
+          <h2 class="section-heading">Liquid Glass Pricing Plans</h2>
+          <p class="section-desc">Test how pricing cards, feature lists, and toggle switches adapt seamlessly to every theme.</p>
+          
+          <!-- Pricing Toggle (Monthly / Annual) -->
+          <div class="pricing-billing-toggle">
+            <span class="billing-label active" id="label-monthly">Monthly</span>
+            <label class="liquid-switch-row mini-switch">
+              <input type="checkbox" id="pricing-cycle-toggle" class="liquid-toggle-input" />
+              <span class="liquid-toggle-slider"></span>
+            </label>
+            <span class="billing-label" id="label-annual">Annual <span class="discount-pill">Save 20%</span></span>
+          </div>
+        </div>
+
+        <div class="pricing-cards-grid">
+          
+          <!-- Starter Tier -->
+          <div class="liquid-card pricing-card tilt-card">
+            <div class="card-specular-glare"></div>
+            <div class="pricing-card-inner">
+              <div class="pricing-header">
+                <div class="tier-name">Starter Kit</div>
+                <p class="tier-desc">Essential liquid glass tokens for prototype projects</p>
+                <div class="tier-price-row">
+                  <span class="tier-currency">$</span>
+                  <span class="tier-amount" data-monthly="19" data-annual="15">19</span>
+                  <span class="tier-period">/ month</span>
+                </div>
+              </div>
+              <ul class="tier-features">
+                <li><span class="check-icon">✓</span> 5 Core Theme Spectrums</li>
+                <li><span class="check-icon">✓</span> Standard Blur & Refraction</li>
+                <li><span class="check-icon">✓</span> CSS Variables Engine</li>
+                <li><span class="check-icon">✓</span> Responsive Bento Layout</li>
+              </ul>
+              <button class="liquid-btn btn-glass btn-full">
+                <span>Get Started Free</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Pro Creator Tier (Featured) -->
+          <div class="liquid-card pricing-card pricing-featured tilt-card">
+            <div class="card-specular-glare"></div>
+            <div class="featured-badge">MOST POPULAR</div>
+            <div class="pricing-card-inner">
+              <div class="pricing-header">
+                <div class="tier-name">Pro Studio</div>
+                <p class="tier-desc">Complete liquid glass system with dynamic customizer</p>
+                <div class="tier-price-row">
+                  <span class="tier-currency">$</span>
+                  <span class="tier-amount" data-monthly="49" data-annual="39">49</span>
+                  <span class="tier-period">/ month</span>
+                </div>
+              </div>
+              <ul class="tier-features">
+                <li><span class="check-icon">✓</span> Everything in Starter</li>
+                <li><span class="check-icon">✓</span> Dedicated Theme Studio Page</li>
+                <li><span class="check-icon">✓</span> 3D Tilt & Specular Cursor Glare</li>
+                <li><span class="check-icon">✓</span> Dark & Light Mode Support</li>
+                <li><span class="check-icon">✓</span> Full Landing Page Template Code</li>
+              </ul>
+              <button class="liquid-btn btn-primary btn-full">
+                <span class="btn-shine"></span>
+                <span>Launch Pro Studio</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Enterprise Tier -->
+          <div class="liquid-card pricing-card tilt-card">
+            <div class="card-specular-glare"></div>
+            <div class="pricing-card-inner">
+              <div class="pricing-header">
+                <div class="tier-name">Enterprise Suite</div>
+                <p class="tier-desc">Tailored design systems for high-traffic platforms</p>
+                <div class="tier-price-row">
+                  <span class="tier-currency">$</span>
+                  <span class="tier-amount" data-monthly="129" data-annual="99">129</span>
+                  <span class="tier-period">/ month</span>
+                </div>
+              </div>
+              <ul class="tier-features">
+                <li><span class="check-icon">✓</span> Everything in Pro Studio</li>
+                <li><span class="check-icon">✓</span> Custom SVG Refraction Shaders</li>
+                <li><span class="check-icon">✓</span> Dedicated UI/UX Pair Programming</li>
+                <li><span class="check-icon">✓</span> Commercial License & SLA</li>
+              </ul>
+              <button class="liquid-btn btn-glass btn-full">
+                <span>Contact Sales</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Preset Themes Section -->
+      <section class="section-container" id="themes">
+        <div class="section-header">
+          <div class="section-tag">MULTI-THEME PRESETS</div>
+          <h2 class="section-heading">Curated Theme Presets</h2>
+          <p class="section-desc">Click any of the curated presets below to immediately transform the entire website's liquid refraction palette, or jump to the Theme Studio to create your own.</p>
+        </div>
+
+        <div class="theme-cards-grid" id="theme-cards-grid">
+          
+          <!-- Theme 1: Cosmic Midnight -->
+          <div class="liquid-card theme-card active" data-theme-target="cosmic">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview cosmic-bg">
+              <div class="theme-orb orb-c1"></div>
+              <div class="theme-orb orb-c2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">1. Midnight Cosmic</h3>
+                <span class="theme-status-tag">ACTIVE</span>
+              </div>
+              <p class="theme-desc">Deep obsidian navy with electric violet, indigo, and cyan liquid glows. Quintessential AI / SaaS dark glass.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #0b0e17;" title="Background"></span>
+                <span class="swatch" style="background: #6366f1;" title="Blob 1"></span>
+                <span class="swatch" style="background: #a855f7;" title="Blob 2"></span>
+                <span class="swatch" style="background: #06b6d4;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Active Theme ✓</button>
+            </div>
+          </div>
+
+          <!-- Theme 2: Emerald Bioluminescence -->
+          <div class="liquid-card theme-card" data-theme-target="emerald">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview emerald-bg">
+              <div class="theme-orb orb-e1"></div>
+              <div class="theme-orb orb-e2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">2. Hyper Emerald</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Abyssal deep teal and dark spruce paired with vibrant mint, toxic neon emerald, and lime-cyan dispersion.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #041412;" title="Background"></span>
+                <span class="swatch" style="background: #10b981;" title="Blob 1"></span>
+                <span class="swatch" style="background: #064e3b;" title="Blob 2"></span>
+                <span class="swatch" style="background: #34d399;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 3: Solar Mirage -->
+          <div class="liquid-card theme-card" data-theme-target="solar">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview solar-bg">
+              <div class="theme-orb orb-s1"></div>
+              <div class="theme-orb orb-s2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">3. Solar Mirage</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Golden hour warmth with deep wine/plum background, molten amber, peach coral, and rose gold liquid refraction.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #14070e;" title="Background"></span>
+                <span class="swatch" style="background: #f97316;" title="Blob 1"></span>
+                <span class="swatch" style="background: #e11d48;" title="Blob 2"></span>
+                <span class="swatch" style="background: #fbbf24;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 4: Cyber Prism -->
+          <div class="liquid-card theme-card" data-theme-target="cyber">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview cyber-bg">
+              <div class="theme-orb orb-cy1"></div>
+              <div class="theme-orb orb-cy2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">4. Cyber Prism</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Synthwave midnight with hot hyper-pink, laser cyan, electric purple, and high-contrast specular borders.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #07030f;" title="Background"></span>
+                <span class="swatch" style="background: #ec4899;" title="Blob 1"></span>
+                <span class="swatch" style="background: #8b5cf6;" title="Blob 2"></span>
+                <span class="swatch" style="background: #22d3ee;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 5: Pearl Frost (Light Luxury) -->
+          <div class="liquid-card theme-card" data-theme-target="pearl">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview pearl-bg">
+              <div class="theme-orb orb-p1"></div>
+              <div class="theme-orb orb-p2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">5. Pearl Frost</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Apple-inspired ethereal light luxury mode. Crisp frosted crystal with sapphire blue, iris violet, and silver gloss.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #edf2f7;" title="Background"></span>
+                <span class="swatch" style="background: #3b82f6;" title="Blob 1"></span>
+                <span class="swatch" style="background: #8b5cf6;" title="Blob 2"></span>
+                <span class="swatch" style="background: #2563eb;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 6: Matcha Zen -->
+          <div class="liquid-card theme-card" data-theme-target="matcha">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview matcha-bg">
+              <div class="theme-orb orb-m1"></div>
+              <div class="theme-orb orb-m2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">6. Matcha Zen</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Tranquil Japanese forest botanics. Deep organic moss, frosted jade refraction, spring mint and soothing bamboo tones.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #05130b;" title="Background"></span>
+                <span class="swatch" style="background: #22c55e;" title="Blob 1"></span>
+                <span class="swatch" style="background: #86efac;" title="Blob 2"></span>
+                <span class="swatch" style="background: #4ade80;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 7: Crimson Eclipse -->
+          <div class="liquid-card theme-card" data-theme-target="crimson">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview crimson-bg">
+              <div class="theme-orb orb-cr1"></div>
+              <div class="theme-orb orb-cr2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">7. Crimson Eclipse</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Dramatic volcanic ruby and blood scarlet. Deep black burgundy background with passionate rose specular glare.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #130307;" title="Background"></span>
+                <span class="swatch" style="background: #f43f5e;" title="Blob 1"></span>
+                <span class="swatch" style="background: #fb7185;" title="Blob 2"></span>
+                <span class="swatch" style="background: #f43f5e;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 8: Nordic Glacier -->
+          <div class="liquid-card theme-card" data-theme-target="glacier">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview glacier-bg">
+              <div class="theme-orb orb-g1"></div>
+              <div class="theme-orb orb-g2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">8. Nordic Glacier</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Sub-zero crystalline iceberg aesthetics. Deep ocean navy, frosty cyan fluid drift, and arctic blue luminescence.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #030c18;" title="Background"></span>
+                <span class="swatch" style="background: #0ea5e9;" title="Blob 1"></span>
+                <span class="swatch" style="background: #38bdf8;" title="Blob 2"></span>
+                <span class="swatch" style="background: #38bdf8;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 9: Tokyo Cyber -->
+          <div class="liquid-card theme-card" data-theme-target="tokyo">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview tokyo-bg">
+              <div class="theme-orb orb-t1"></div>
+              <div class="theme-orb orb-t2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">9. Tokyo Cyber</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Electric Akihabara rain aesthetic. Hyper-saturated neon fuchsia, cyberpunk purple, and radioactive laser blue.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #0a0216;" title="Background"></span>
+                <span class="swatch" style="background: #d946ef;" title="Blob 1"></span>
+                <span class="swatch" style="background: #a855f7;" title="Blob 2"></span>
+                <span class="swatch" style="background: #a855f7;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 10: Amber Honey -->
+          <div class="liquid-card theme-card" data-theme-target="amber">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview amber-bg">
+              <div class="theme-orb orb-a1"></div>
+              <div class="theme-orb orb-a2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">10. Amber Honey</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Opulent roasted caramel and golden honey syrup. Deep molasses brown paired with radiant topaz dispersion.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #160a03;" title="Background"></span>
+                <span class="swatch" style="background: #f59e0b;" title="Blob 1"></span>
+                <span class="swatch" style="background: #fbbf24;" title="Blob 2"></span>
+                <span class="swatch" style="background: #fbbf24;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 11: Amethyst Void -->
+          <div class="liquid-card theme-card" data-theme-target="amethyst">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview amethyst-bg">
+              <div class="theme-orb orb-am1"></div>
+              <div class="theme-orb orb-am2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">11. Amethyst Void</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Mystical royal mineral glass. Royal purple darkness with crystalline lilac, lavender haze, and indigo shadows.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #0a0416;" title="Background"></span>
+                <span class="swatch" style="background: #9333ea;" title="Blob 1"></span>
+                <span class="swatch" style="background: #c084fc;" title="Blob 2"></span>
+                <span class="swatch" style="background: #c084fc;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+          <!-- Theme 12: Ghost Titanium -->
+          <div class="liquid-card theme-card" data-theme-target="titanium">
+            <div class="card-specular-glare"></div>
+            <div class="theme-card-preview titanium-bg">
+              <div class="theme-orb orb-ti1"></div>
+              <div class="theme-orb orb-ti2"></div>
+              <div class="theme-glass-mini"></div>
+            </div>
+            <div class="theme-card-body">
+              <div class="theme-title-row">
+                <h3 class="theme-name">12. Ghost Titanium</h3>
+                <span class="theme-status-tag">PRESET</span>
+              </div>
+              <p class="theme-desc">Industrial luxury slate and brushed aerospace titanium. Ultra-minimalist monochrome dark glass with crisp white specular edging.</p>
+              <div class="theme-palette-swatches">
+                <span class="swatch" style="background: #090a0f;" title="Background"></span>
+                <span class="swatch" style="background: #64748b;" title="Blob 1"></span>
+                <span class="swatch" style="background: #cbd5e1;" title="Blob 2"></span>
+                <span class="swatch" style="background: #e2e8f0;" title="Accent"></span>
+              </div>
+              <button class="liquid-btn btn-sm btn-glass theme-select-btn">Apply Theme</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Bento Grid Showcase: Liquid Glass in Action -->
+      <section class="section-container" id="features">
+        <div class="section-header">
+          <div class="section-tag">PHYSICS & SPECULAR REFLECTION</div>
+          <h2 class="section-heading">Multi-Layered Liquid Glass Components</h2>
+          <p class="section-desc">Move your cursor over each card to experience dynamic specular highlight reflection, 3D tilt responsiveness, and fluid backdrop dispersion.</p>
+        </div>
+
+        <div class="bento-grid">
+          
+          <!-- Bento 1: 3D Holographic Liquid Pass -->
+          <div class="liquid-card bento-card bento-card-holographic tilt-card" id="card-hologram">
+            <div class="card-specular-glare"></div>
+            <div class="card-header">
+              <div class="card-badge">HOLOGRAPHIC PASS</div>
+              <div class="card-icon-glass">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="holographic-body">
+              <div class="holo-chip">
+                <div class="chip-line"></div>
+                <div class="chip-line"></div>
+              </div>
+              <div class="holo-number">•••• •••• •••• 8842</div>
+              <div class="holo-footer">
+                <div>
+                  <div class="holo-sub">HOLDER</div>
+                  <div class="holo-val">DESIGN ARCHITECT</div>
+                </div>
+                <div>
+                  <div class="holo-sub">STATUS</div>
+                  <div class="holo-val status-active">REFRACTIVE</div>
+                </div>
+              </div>
+            </div>
+            <div class="holo-sheen"></div>
+            <div class="card-footer-caption">
+              <span>Interactive 3D Tilt</span>
+              <span class="caption-hint">Tilt with cursor</span>
+            </div>
+          </div>
+
+          <!-- Bento 2: Ambient Liquid Audio Widget -->
+          <div class="liquid-card bento-card bento-card-audio tilt-card">
+            <div class="card-specular-glare"></div>
+            <div class="card-header">
+              <div class="card-badge">LIQUID SOUNDSCAPE</div>
+              <span class="live-pulse-badge">LIVE EQ</span>
+            </div>
+            <div class="audio-player-ui">
+              <div class="album-art-liquid">
+                <div class="album-circle-ripple"></div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18V5l12-2v13"></path>
+                  <circle cx="6" cy="18" r="3"></circle>
+                  <circle cx="18" cy="16" r="3"></circle>
+                </svg>
+              </div>
+              <div class="track-details">
+                <div class="track-title">Ethereal Refraction</div>
+                <div class="track-artist">Aura Fluid Synthesis</div>
+              </div>
+              <div class="eq-visualizer" id="eq-bars">
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+              </div>
+              <div class="audio-controls">
+                <button class="glass-icon-btn" id="audio-prev" title="Previous">⏮</button>
+                <button class="liquid-play-btn" id="audio-play-toggle" title="Play / Pause">
+                  <span id="play-icon">▶</span>
+                </button>
+                <button class="glass-icon-btn" id="audio-next" title="Next">⏭</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento 3: Liquid Glass Morphing Metric (FIXED PROGRESS BAR CONTRAST) -->
+          <div class="liquid-card bento-card bento-card-metric tilt-card">
+            <div class="card-specular-glare"></div>
+            <div class="card-header">
+              <div class="card-badge">DISPERSION RATE</div>
+              <div class="status-indicator"></div>
+            </div>
+            <div class="metric-display">
+              <div class="metric-big-number" id="metric-dispersion">98.4<span class="metric-percent">%</span></div>
+              <div class="metric-trend positive">↑ +14.2% light dispersion</div>
+            </div>
+            <div class="liquid-progress-container">
+              <div class="liquid-progress-bar" style="width: 82%;">
+                <div class="progress-glow"></div>
+              </div>
+            </div>
+            <p class="card-footnote">Subsurface light scattering dynamically calculated based on theme background luminosity.</p>
+          </div>
+
+          <!-- Bento 4: Interactive Liquid Toggle Switchboard -->
+          <div class="liquid-card bento-card bento-card-controls tilt-card">
+            <div class="card-specular-glare"></div>
+            <div class="card-header">
+              <div class="card-badge">SURFACE SENSORS</div>
+              <span class="badge-mini">ACTIVE</span>
+            </div>
+            <div class="interactive-switch-group">
+              <label class="liquid-switch-row">
+                <div class="switch-meta">
+                  <span class="switch-title">Fluid Motion Drift</span>
+                  <span class="switch-desc">Simulate harmonic fluid currents</span>
+                </div>
+                <input type="checkbox" id="toggle-motion" checked class="liquid-toggle-input" />
+                <span class="liquid-toggle-slider"></span>
+              </label>
+
+              <label class="liquid-switch-row">
+                <div class="switch-meta">
+                  <span class="switch-title">Chromatic Refraction</span>
+                  <span class="switch-desc">Iridescent border glow prism</span>
+                </div>
+                <input type="checkbox" id="toggle-chromatic" checked class="liquid-toggle-input" />
+                <span class="liquid-toggle-slider"></span>
+              </label>
+
+              <label class="liquid-switch-row">
+                <div class="switch-meta">
+                  <span class="switch-title">Glass Surface Noise</span>
+                  <span class="switch-desc">Micro-grain tactile texture</span>
+                </div>
+                <input type="checkbox" id="toggle-noise" checked class="liquid-toggle-input" />
+                <span class="liquid-toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Glass Lab: Quick Sandbox -->
+      <section class="section-container" id="sandbox">
+        <div class="section-header">
+          <div class="section-tag">QUICK SANDBOX</div>
+          <h2 class="section-heading">The Glass Lab: Live Parameters</h2>
+          <p class="section-desc">Quick adjustments to blur depth, surface translucency, and glare intensity.</p>
+        </div>
+
+        <div class="sandbox-layout liquid-card">
+          <div class="sandbox-controls">
+            
+            <div class="sandbox-control-item">
+              <div class="control-header">
+                <label for="slider-blur">Glass Blur Depth</label>
+                <span class="control-value" id="val-blur">22px</span>
+              </div>
+              <input type="range" id="slider-blur" min="4" max="48" value="22" class="liquid-range" />
+            </div>
+
+            <div class="sandbox-control-item">
+              <div class="control-header">
+                <label for="slider-opacity">Surface Translucency Multiplier</label>
+                <span class="control-value" id="val-opacity">1.0x (Optimal)</span>
+              </div>
+              <input type="range" id="slider-opacity" min="30" max="250" value="100" class="liquid-range" />
+              <div class="control-help">Safe multiplier preserving color integrity without turning white in dark mode.</div>
+            </div>
+
+            <div class="sandbox-control-item">
+              <div class="control-header">
+                <label for="slider-specular">Specular Glare Intensity</label>
+                <span class="control-value" id="val-specular">65%</span>
+              </div>
+              <input type="range" id="slider-specular" min="10" max="100" value="65" class="liquid-range" />
+            </div>
+
+            <div class="sandbox-control-item">
+              <div class="control-header">
+                <label for="slider-hue">Custom Accent Hue Tester</label>
+                <span class="control-value" id="val-hue">Theme Default</span>
+              </div>
+              <input type="range" id="slider-hue" min="0" max="360" value="260" class="liquid-range hue-range" />
+            </div>
+
+            <div class="sandbox-btn-group">
+              <button class="liquid-btn btn-glass" id="btn-reset-sandbox">
+                <span>Reset Defaults</span>
+              </button>
+              <button class="liquid-btn btn-primary" id="btn-copy-css">
+                <span class="btn-shine"></span>
+                <span>Copy Glass CSS</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="sandbox-preview-container">
+            <div class="liquid-card preview-card" id="sandbox-preview-card">
+              <div class="card-specular-glare"></div>
+              <div class="preview-badge">LIVE TEST BED</div>
+              <h3 class="preview-title">Real-Time Refraction Target</h3>
+              <p class="preview-text">This surface reacts dynamically to the slider values on the left. The fluid blobs moving underneath refract according to the blur depth and opacity you specify.</p>
+              
+              <div class="preview-interactive-row">
+                <div class="preview-pill">
+                  <span class="orb-small"></span>
+                  <span>Refractive Specular</span>
+                </div>
+                <div class="preview-pill">
+                  <span class="orb-small green"></span>
+                  <span>Harmonic Float</span>
+                </div>
+              </div>
+
+              <div class="preview-input-group">
+                <input type="text" placeholder="Type here to test glass inputs..." class="liquid-input" />
+                <button class="liquid-btn btn-primary btn-sm">
+                  <span>Submit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Components Showcase: Liquid UI Elements -->
+      <section class="section-container" id="components">
+        <div class="section-header">
+          <div class="section-tag">UI KITCHEN SINK</div>
+          <h2 class="section-heading">Liquid Glass UI Elements</h2>
+          <p class="section-desc">Test common UI interactive components to see how buttons, inputs, segmented controls, and badges adapt to your theme.</p>
+        </div>
+
+        <div class="components-grid">
+          
+          <!-- Buttons & Triggers -->
+          <div class="liquid-card component-card">
+            <div class="component-card-title">Buttons & Action Elements</div>
+            <div class="demo-element-row">
+              <button class="liquid-btn btn-primary">
+                <span class="btn-shine"></span>
+                <span>Primary Shimmer</span>
+              </button>
+              <button class="liquid-btn btn-glass">
+                <span>Frosted Glass</span>
+              </button>
+              <button class="liquid-btn btn-outline">
+                <span>Specular Outline</span>
+              </button>
+            </div>
+            <div class="demo-element-row">
+              <button class="liquid-btn btn-danger btn-sm">
+                <span>Alert Glow</span>
+              </button>
+              <button class="liquid-btn btn-glass btn-sm" id="btn-demo-toast">
+                <span>Trigger Glass Toast ✨</span>
+              </button>
+              <button class="liquid-btn btn-primary btn-sm" id="btn-trigger-modal-demo-2">
+                <span>Glass Modal Demo 🪟</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Inputs & Forms -->
+          <div class="liquid-card component-card">
+            <div class="component-card-title">Frosted Inputs & Focus Rings</div>
+            <div class="demo-form-col">
+              <div class="input-wrapper">
+                <label class="input-label">Project Workspace Name</label>
+                <input type="text" value="Liquid Theme Sandbox" class="liquid-input" />
+              </div>
+              <div class="input-wrapper">
+                <label class="input-label">Refraction Mode</label>
+                <div class="liquid-segmented-control" id="seg-control">
+                  <button class="seg-btn active" data-seg="gloss">Glossy</button>
+                  <button class="seg-btn" data-seg="frosted">Frosted</button>
+                  <button class="seg-btn" data-seg="molten">Molten</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Badges, Pills & Statuses -->
+          <div class="liquid-card component-card">
+            <div class="component-card-title">Liquid Badges & Indicators</div>
+            <div class="badges-cloud">
+              <span class="liquid-badge badge-accent">
+                <span class="badge-dot"></span> Accent Refract
+              </span>
+              <span class="liquid-badge badge-success">
+                <span class="badge-dot"></span> GPU Accelerated
+              </span>
+              <span class="liquid-badge badge-warning">
+                <span class="badge-dot"></span> Dynamic Specular
+              </span>
+              <span class="liquid-badge badge-neutral">
+                <span class="badge-dot"></span> CSS Variable Token
+              </span>
+              <span class="liquid-badge badge-purple">
+                <span class="badge-dot"></span> 60 FPS Fluid Mesh
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section: Interactive Contact / Lead Capture Form -->
+      <section class="section-container" id="contact">
+        <div class="section-header">
+          <div class="section-tag">LEAD CAPTURE TEMPLATE</div>
+          <h2 class="section-heading">Liquid Glass Contact Form</h2>
+          <p class="section-desc">Experience how form elements, floating inputs, textareas, and interactive states render under frosted glass.</p>
+        </div>
+
+        <div class="liquid-card contact-form-card">
+          <div class="card-specular-glare"></div>
+          <form id="demo-contact-form" class="contact-grid" onsubmit="event.preventDefault();">
+            <div class="input-wrapper">
+              <label class="input-label">Your Name</label>
+              <input type="text" placeholder="e.g. Alex Rivera" class="liquid-input" required />
+            </div>
+            <div class="input-wrapper">
+              <label class="input-label">Your Email</label>
+              <input type="email" placeholder="alex@company.com" class="liquid-input" required />
+            </div>
+            <div class="input-wrapper full-col">
+              <label class="input-label">Theme Category or Project Scope</label>
+              <select class="liquid-input liquid-select">
+                <option value="saas">SaaS / Web3 Dashboard</option>
+                <option value="ecommerce">Luxury Fashion & E-Commerce</option>
+                <option value="portfolio">Creative Design Portfolio</option>
+                <option value="custom">Custom Theme Exploration</option>
+              </select>
+            </div>
+            <div class="input-wrapper full-col">
+              <label class="input-label">Message & Visual Requirements</label>
+              <textarea placeholder="Tell us about the aesthetics or color themes you want to build..." rows="4" class="liquid-input liquid-textarea"></textarea>
+            </div>
+            <div class="full-col form-actions-row">
+              <button type="submit" class="liquid-btn btn-primary btn-lg" id="btn-submit-contact">
+                <span class="btn-shine"></span>
+                <span>Send Message ✨</span>
+              </button>
+              <span class="form-privacy-note">🔒 Encrypted with 1.52 refractive liquid security.</span>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Theme Token Inspector -->
+      <section class="section-container" id="tokens">
+        <div class="section-header">
+          <div class="section-tag">CUSTOM THEME READY</div>
+          <h2 class="section-heading">How We Plug In Your Themes</h2>
+          <p class="section-desc">Once you review this website and share your theme requirements, we can immediately add them using the CSS token schema below.</p>
+        </div>
+
+        <div class="liquid-card tokens-card">
+          <div class="tokens-header">
+            <div class="tokens-title-wrap">
+              <span class="token-code-icon">{ }</span>
+              <span class="token-header-text">Active Theme CSS Variables Schema</span>
+            </div>
+            <button class="liquid-btn btn-sm btn-glass" id="btn-copy-tokens">
+              <span id="copy-tokens-text">Copy Token Code</span>
+            </button>
+          </div>
+
+          <pre class="tokens-code-block" id="tokens-code"><code>/* Active Theme: <span id="token-theme-name">Midnight Cosmic</span> */
+[data-theme="custom-theme-name"] {
+  --bg-base: <span class="tok-bg">#0b0e17</span>;
+  --bg-surface: <span class="tok-surface">rgba(18, 24, 38, 0.65)</span>;
+  --liquid-blob-1: <span class="tok-b1">#6366f1</span>;
+  --liquid-blob-2: <span class="tok-b2">#a855f7</span>;
+  --liquid-blob-3: <span class="tok-b3">#06b6d4</span>;
+  --liquid-blob-4: <span class="tok-b4">#3b82f6</span>;
+  --accent-primary: <span class="tok-acc">#06b6d4</span>;
+  --accent-glow: <span class="tok-glow">rgba(6, 182, 212, 0.45)</span>;
+  --glass-bg: <span class="tok-gbg">rgba(255, 255, 255, 0.06)</span>;
+  --glass-border: <span class="tok-gborder">rgba(255, 255, 255, 0.14)</span>;
+  --glass-specular: <span class="tok-gspec">rgba(255, 255, 255, 0.5)</span>;
+  --text-primary: <span class="tok-tp">#f8fafc</span>;
+  --text-secondary: <span class="tok-ts">#94a3b8</span>;
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- Floating Bottom Quick Theme Switcher Dock (Collapsible & Fixed Overlap) -->
+      <aside class="floating-theme-dock liquid-card" id="floating-dock">
+        <!-- Dock Toggle Collapse Button -->
+        <button class="dock-collapse-trigger" id="dock-collapse-trigger" title="Collapse or Expand Theme Dock">
+          <span class="collapse-icon">▾</span>
+        </button>
+
+        <div class="dock-main-content" id="dock-main-content">
+          <div class="dock-title">Themes:</div>
+          <div class="dock-buttons" id="dock-buttons-container">
+            <button class="dock-btn active" data-theme-target="cosmic" title="Midnight Cosmic">
+              <span class="dock-dot cosmic-dot"></span>
+              <span class="dock-name">Cosmic</span>
+            </button>
+            <button class="dock-btn" data-theme-target="emerald" title="Hyper Emerald">
+              <span class="dock-dot emerald-dot"></span>
+              <span class="dock-name">Emerald</span>
+            </button>
+            <button class="dock-btn" data-theme-target="solar" title="Solar Mirage">
+              <span class="dock-dot solar-dot"></span>
+              <span class="dock-name">Solar</span>
+            </button>
+            <button class="dock-btn" data-theme-target="cyber" title="Cyber Prism">
+              <span class="dock-dot cyber-dot"></span>
+              <span class="dock-name">Cyber</span>
+            </button>
+            <button class="dock-btn" data-theme-target="pearl" title="Pearl Frost">
+              <span class="dock-dot pearl-dot"></span>
+              <span class="dock-name">Pearl</span>
+            </button>
+            <button class="dock-btn" data-theme-target="matcha" title="Matcha Zen">
+              <span class="dock-dot matcha-dot"></span>
+              <span class="dock-name">Matcha</span>
+            </button>
+            <button class="dock-btn" data-theme-target="crimson" title="Crimson Eclipse">
+              <span class="dock-dot crimson-dot"></span>
+              <span class="dock-name">Crimson</span>
+            </button>
+            <button class="dock-btn" data-theme-target="glacier" title="Nordic Glacier">
+              <span class="dock-dot glacier-dot"></span>
+              <span class="dock-name">Glacier</span>
+            </button>
+            <button class="dock-btn" data-theme-target="tokyo" title="Tokyo Cyber">
+              <span class="dock-dot tokyo-dot"></span>
+              <span class="dock-name">Tokyo</span>
+            </button>
+            <button class="dock-btn" data-theme-target="amber" title="Amber Honey">
+              <span class="dock-dot amber-dot"></span>
+              <span class="dock-name">Amber</span>
+            </button>
+            <button class="dock-btn" data-theme-target="amethyst" title="Amethyst Void">
+              <span class="dock-dot amethyst-dot"></span>
+              <span class="dock-name">Amethyst</span>
+            </button>
+            <button class="dock-btn" data-theme-target="titanium" title="Ghost Titanium">
+              <span class="dock-dot titanium-dot"></span>
+              <span class="dock-name">Titanium</span>
+            </button>
+          </div>
+
+          <div class="dock-divider"></div>
+
+          <!-- Dock Mode Toggle -->
+          <button class="dock-icon-action" id="dock-mode-toggle" title="Toggle Dark/Light Mode">
+            <span class="dock-mode-icon">🌙</span>
+          </button>
+
+          <!-- Dock Studio Jump -->
+          <a href="#studio" class="dock-icon-action" id="dock-btn-studio" title="Jump to Theme Studio">
+            <span>🎨</span>
+          </a>
+
+          <!-- Dock Zen View -->
+          <button class="dock-icon-action" id="dock-btn-zen" title="Toggle Clean Preview Mode">
+            <span>👁️</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Footer -->
+      <footer class="glass-footer liquid-card">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <span class="brand-title">AETHER</span>
+            <span class="footer-copy">• Liquid Glass Architecture & Multi-Theme Engine</span>
+          </div>
+          <div class="footer-links">
+            <a href="#showcase">Showcase</a>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#studio">Theme Studio</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#themes">Presets</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+
+    <!-- MODAL: INTERACTIVE LIQUID GLASS DIALOG PREVIEW -->
+    <div class="glass-modal-backdrop" id="modal-glass-demo" aria-hidden="true">
+      <div class="glass-modal liquid-card" role="dialog" aria-modal="true">
+        <div class="card-specular-glare"></div>
+        
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-icon">🪟</span>
+            <h3 class="modal-title">Liquid Glass Dialog Preview</h3>
+          </div>
+          <button class="modal-close-btn" id="btn-close-demo-modal" aria-label="Close modal">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="modal-subtitle">This demonstrates how high-priority modals, confirmation dialogs, and popups behave with deep liquid glass backdrop blur and iridescent specular borders.</p>
+          
+          <div class="demo-dialog-box">
+            <div class="dialog-chip-row">
+              <span class="liquid-badge badge-accent">Ultra-Frosted</span>
+              <span class="liquid-badge badge-success">Hardware Accelerated</span>
+              <span class="liquid-badge badge-warning">Zero Color Washout</span>
+            </div>
+            <p class="dialog-description">
+              Notice how the background elements smoothly diffuse behind this surface without losing the vibrancy of the active theme spectrum.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="liquid-btn btn-glass" id="btn-dismiss-demo-modal">
+            <span>Close Preview</span>
+          </button>
+          <button class="liquid-btn btn-primary" id="btn-confirm-demo-modal">
+            <span class="btn-shine"></span>
+            <span>Confirm Action ✓</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glass Toast Notifications Container (BOTTOM RIGHT CORNER) -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script type="module" src="./glass.js"></script>
+  </body>
+</html>
